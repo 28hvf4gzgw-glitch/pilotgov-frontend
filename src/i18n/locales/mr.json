@@ -70,6 +70,7 @@
     "bullet2": "DPIIT-पडताळणी पात्रता बॅज",
     "bullet3": "मागील पायलटचा सार्वजनिक रेकॉर्ड",
     "searchPlaceholder": "नाव, डोमेन किंवा क्षमतेनुसार शोधा…",
+    "clearSearch": "शोध साफ करा",
     "allDomains": "सर्व डोमेन",
     "noResults": "तुमच्या शोधाशी जुळणारा कोणताही स्टार्टअप नाही.",
     "clearFilters": "सर्व फिल्टर साफ करा",
@@ -83,7 +84,13 @@
     "fetching": "आणले जात आहे…",
     "offline": "बॅकएंड ऑफलाइन — नमुना डेटा दाखवत आहे",
     "live": "PilotGov API वरून थेट",
-    "countSuffix": "{{total}} पैकी DPIIT-पडताळणी स्टार्टअप्स"
+    "countSummary": "{{total}} पैकी {{count}} DPIIT-पडताळणी स्टार्टअप्स",
+    "countSuffix": "{{total}} पैकी DPIIT-पडताळणी स्टार्टअप्स",
+    "eligibility": {
+      "DPIIT Verified": "DPIIT पडताळणीकृत",
+      "Provisional": "तात्पुरते",
+      "Pending": "प्रलंबित"
+    }
   },
   "pilot": {
     "eyebrow": "पायलट ट्रॅकर",
@@ -113,6 +120,7 @@
     "traditionalLabel": "पारंपरिक: 180 दिवस",
     "stat1Note": "पारंपरिक विक्रेत्यांच्या तुलनेत सरासरी खर्च बचत",
     "stat2Note": "पारंपरिक 180 दिवसांच्या तुलनेत सरासरी अंमलबजावणी वेळ",
+    "days": "दिवस",
     "outcomeLabels": {
       "Cost savings vs traditional vendor": "पारंपरिक विक्रेत्याच्या तुलनेत खर्च बचत",
       "Time-to-deploy (PilotGov)": "अंमलबजावणी वेळ (PilotGov)",

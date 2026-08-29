@@ -70,6 +70,7 @@
     "bullet2": "DPIIT-verified eligibility badges",
     "bullet3": "Public track record of past pilots",
     "searchPlaceholder": "Search by name, domain, or capability…",
+    "clearSearch": "Clear search",
     "allDomains": "All domains",
     "noResults": "No startups match your search.",
     "clearFilters": "Clear all filters",
@@ -83,7 +84,13 @@
     "fetching": "Fetching…",
     "offline": "Backend offline — showing sample data",
     "live": "Live from PilotGov API",
-    "countSuffix": "of {{total}} DPIIT-verified startups"
+    "countSummary": "{{count}} of {{total}} DPIIT-verified startups",
+    "countSuffix": "of {{total}} DPIIT-verified startups",
+    "eligibility": {
+      "DPIIT Verified": "DPIIT Verified",
+      "Provisional": "Provisional",
+      "Pending": "Pending"
+    }
   },
   "pilot": {
     "eyebrow": "Pilot tracker",
@@ -113,6 +120,7 @@
     "traditionalLabel": "Traditional: 180 days",
     "stat1Note": "avg. cost savings vs traditional vendors",
     "stat2Note": "avg. time-to-deploy vs 180 days traditional",
+    "days": "days",
     "outcomeLabels": {
       "Cost savings vs traditional vendor": "Cost savings vs traditional vendor",
       "Time-to-deploy (PilotGov)": "Time-to-deploy (PilotGov)",

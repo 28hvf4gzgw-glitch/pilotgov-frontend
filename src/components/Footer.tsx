@@ -1,27 +1,35 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Landmark, ArrowRight } from 'lucide-react';
 import { fadeUp, stagger } from '@/lib/motion';
 
-const columns = [
+const columnConfigs = [
   {
-    title: 'Product',
-    links: ['How it works', 'Discovery', 'Pilot tracker', 'Outcomes dashboard'],
+    titleKey: 'footer.colProduct',
+    linksKey: 'footer.productLinks',
   },
   {
-    title: 'Government',
-    links: ['For departments', 'Compliance', 'Security', 'Case studies'],
+    titleKey: 'footer.colGovernment',
+    linksKey: 'footer.governmentLinks',
   },
   {
-    title: 'Startups',
-    links: ['Apply to join', 'Eligibility', 'Pilot playbook', 'Success stories'],
+    titleKey: 'footer.colStartups',
+    linksKey: 'footer.startupLinks',
   },
   {
-    title: 'About',
-    links: ['Mission', 'Team', 'Press', 'Contact'],
+    titleKey: 'footer.colAbout',
+    linksKey: 'footer.aboutLinks',
   },
-];
+] as const;
 
 export default function Footer() {
+  const { t } = useTranslation();
+
+  const columns = columnConfigs.map((col) => ({
+    title: t(col.titleKey),
+    links: (t(col.linksKey, { returnObjects: true }) as string[]) || [],
+  }));
+
   return (
     <footer id="get-started" className="relative border-t border-white/5 bg-ink-900/50">
       {/* CTA band */}
@@ -35,11 +43,10 @@ export default function Footer() {
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
           <motion.div variants={fadeUp} className="text-center lg:text-left">
             <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white">
-              Ready to pilot what's next?
+              {t('footer.heading')}
             </h3>
             <p className="mt-3 text-white/50 max-w-md">
-              Join the departments and startups building a faster path from
-              idea to public impact.
+              {t('footer.subtitle')}
             </p>
           </motion.div>
           <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3">
@@ -47,14 +54,14 @@ export default function Footer() {
               href="#"
               className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-950 hover:bg-white/90 transition-all hover:shadow-xl hover:shadow-white/10"
             >
-              Book a Demo
+              {t('footer.bookDemo')}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </a>
             <a
               href="#"
               className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-6 py-3 text-sm font-semibold text-white hover:bg-white/[0.07] transition-all"
             >
-              Read the docs
+              {t('footer.readDocs')}
             </a>
           </motion.div>
         </div>
@@ -73,7 +80,7 @@ export default function Footer() {
               </span>
             </a>
             <p className="text-sm text-white/40 leading-relaxed max-w-xs">
-              A startup-friendly public procurement mechanism.
+              {t('footer.tagline')}
             </p>
           </div>
 
@@ -100,12 +107,12 @@ export default function Footer() {
 
         <div className="mt-14 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-white/30">
-            © 2026 PilotGov. A public-sector innovation initiative.
+            {t('footer.copyright')}
           </p>
           <div className="flex items-center gap-6">
-            <a href="#" className="text-xs text-white/30 hover:text-white/60 transition-colors">Privacy</a>
-            <a href="#" className="text-xs text-white/30 hover:text-white/60 transition-colors">Terms</a>
-            <a href="#" className="text-xs text-white/30 hover:text-white/60 transition-colors">Security</a>
+            <a href="#" className="text-xs text-white/30 hover:text-white/60 transition-colors">{t('footer.privacy')}</a>
+            <a href="#" className="text-xs text-white/30 hover:text-white/60 transition-colors">{t('footer.terms')}</a>
+            <a href="#" className="text-xs text-white/30 hover:text-white/60 transition-colors">{t('footer.security')}</a>
           </div>
         </div>
       </div>

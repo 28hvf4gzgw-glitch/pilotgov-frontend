@@ -137,14 +137,14 @@ export default function StartupDiscovery() {
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search by name, domain, or capability…"
+                    placeholder={t('discovery.searchPlaceholder')}
                     className="flex-1 bg-transparent text-sm text-white placeholder:text-white/40 outline-none"
                   />
                   {query && (
                     <button
                       onClick={() => setQuery('')}
                       className="text-white/30 hover:text-white/60 transition-colors shrink-0"
-                      aria-label="Clear search"
+                      aria-label={t('discovery.clearSearch')}
                     >
                       <X className="h-3.5 w-3.5" />
                     </button>
@@ -161,7 +161,7 @@ export default function StartupDiscovery() {
                         : 'border-white/10 bg-white/[0.03] text-white/50 hover:text-white/80 hover:border-white/20'
                     }`}
                   >
-                    All domains
+                    {t('discovery.allDomains')}
                   </button>
                   {allDomains.map((d) => (
                     <button
@@ -190,12 +190,12 @@ export default function StartupDiscovery() {
                       exit={{ opacity: 0 }}
                       className="px-5 py-12 text-center"
                     >
-                      <p className="text-sm text-white/40">No startups match your search.</p>
+                      <p className="text-sm text-white/40">{t('discovery.noResults')}</p>
                       <button
                         onClick={() => { setQuery(''); setActiveDomain(null); }}
                         className="mt-3 text-xs text-emerald2-400 hover:text-emerald2-300 transition-colors"
                       >
-                        Clear all filters
+                        {t('discovery.clearFilters')}
                       </button>
                     </motion.div>
                   ) : (
@@ -226,15 +226,15 @@ export default function StartupDiscovery() {
                                   {s.name}
                                 </span>
                                 <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium ${badgeStyles[s.eligibility]}`}>
-                                  {s.eligibility}
+                                  {t(`discovery.eligibility.${s.eligibility}`, s.eligibility)}
                                 </span>
                               </div>
                               <p className="text-xs text-white/45 mt-1 truncate">{s.pitch}</p>
                               <div className="flex items-center gap-2 mt-1.5">
                                 <span className="text-xs text-white/40">{s.domain}</span>
-                                {s.tags.map((t) => (
-                                  <span key={t} className="text-[10px] text-white/30 bg-white/5 rounded px-1.5 py-0.5">
-                                    {t}
+                                {s.tags.map((tTag) => (
+                                  <span key={tTag} className="text-[10px] text-white/30 bg-white/5 rounded px-1.5 py-0.5">
+                                    {tTag}
                                   </span>
                                 ))}
                               </div>
@@ -242,7 +242,7 @@ export default function StartupDiscovery() {
 
                             {/* Match score */}
                             <div className="hidden sm:flex flex-col items-end shrink-0">
-                              <span className="text-[10px] uppercase tracking-wider text-white/30">Match</span>
+                              <span className="text-[10px] uppercase tracking-wider text-white/30">{t('discovery.match')}</span>
                               <span className={`text-lg font-semibold tabular-nums ${s.match >= 90 ? 'text-emerald2-400' : 'text-white'}`}>
                                 {s.match}
                               </span>
@@ -267,7 +267,7 @@ export default function StartupDiscovery() {
                                   <div className="rounded-lg border border-white/[0.06] bg-ink-850 p-4 mb-3">
                                     <div className="flex items-center gap-2 mb-2">
                                       <Target className="h-3.5 w-3.5 text-emerald2-400" />
-                                      <span className="text-[11px] font-semibold uppercase tracking-wider text-white/50">Mission</span>
+                                      <span className="text-[11px] font-semibold uppercase tracking-wider text-white/50">{t('discovery.mission')}</span>
                                     </div>
                                     <p className="text-sm text-white/70 leading-relaxed">{s.mission}</p>
                                   </div>
@@ -277,21 +277,21 @@ export default function StartupDiscovery() {
                                     <div className="rounded-lg border border-white/[0.06] bg-ink-850 p-3">
                                       <div className="flex items-center gap-1.5 mb-1">
                                         <FlaskConical className="h-3.5 w-3.5 text-sky-400" />
-                                        <span className="text-[10px] uppercase tracking-wider text-white/40">TRL Level</span>
+                                        <span className="text-[10px] uppercase tracking-wider text-white/40">{t('discovery.trlLevel')}</span>
                                       </div>
                                       <p className="text-lg font-semibold text-white tabular-nums">{s.trl}<span className="text-xs text-white/40">/9</span></p>
                                     </div>
                                     <div className="rounded-lg border border-white/[0.06] bg-ink-850 p-3">
                                       <div className="flex items-center gap-1.5 mb-1">
                                         <History className="h-3.5 w-3.5 text-amber-400" />
-                                        <span className="text-[10px] uppercase tracking-wider text-white/40">Past Pilots</span>
+                                        <span className="text-[10px] uppercase tracking-wider text-white/40">{t('discovery.pastPilots')}</span>
                                       </div>
                                       <p className="text-lg font-semibold text-white tabular-nums">{s.pastPilots.length}</p>
                                     </div>
                                     <div className="rounded-lg border border-white/[0.06] bg-ink-850 p-3">
                                       <div className="flex items-center gap-1.5 mb-1">
                                         <ShieldCheck className="h-3.5 w-3.5 text-emerald2-400" />
-                                        <span className="text-[10px] uppercase tracking-wider text-white/40">Match Score</span>
+                                        <span className="text-[10px] uppercase tracking-wider text-white/40">{t('discovery.matchScore')}</span>
                                       </div>
                                       <p className={`text-lg font-semibold tabular-nums ${s.match >= 90 ? 'text-emerald2-400' : 'text-white'}`}>{s.match}</p>
                                     </div>
@@ -301,7 +301,7 @@ export default function StartupDiscovery() {
                                   <div className="rounded-lg border border-white/[0.06] bg-ink-850 p-4">
                                     <div className="flex items-center gap-2 mb-3">
                                       <History className="h-3.5 w-3.5 text-white/40" />
-                                      <span className="text-[11px] font-semibold uppercase tracking-wider text-white/50">Past Pilot Outcomes</span>
+                                      <span className="text-[11px] font-semibold uppercase tracking-wider text-white/50">{t('discovery.pastPilotOutcomes')}</span>
                                     </div>
                                     <div className="space-y-3">
                                       {s.pastPilots.map((p, idx) => (
@@ -319,7 +319,7 @@ export default function StartupDiscovery() {
 
                                   {/* CTA */}
                                   <button className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white/[0.04] border border-white/10 px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] hover:border-white/20 transition-all">
-                                    Request pilot with {s.name}
+                                    {t('discovery.requestPilot', { name: s.name })}
                                     <ArrowUpRight className="h-3.5 w-3.5" />
                                   </button>
                                 </div>
@@ -339,22 +339,22 @@ export default function StartupDiscovery() {
                   {loading ? (
                     <>
                       <Loader2 className="h-3 w-3 animate-spin" />
-                      Fetching…
+                      {t('discovery.fetching')}
                     </>
                   ) : usingFallback ? (
                     <>
                       <WifiOff className="h-3 w-3 text-amber-400/70" />
-                      <span className="text-amber-400/70">Backend offline — showing sample data</span>
+                      <span className="text-amber-400/70">{t('discovery.offline')}</span>
                     </>
                   ) : (
                     <>
                       <Clock className="h-3 w-3" />
-                      Live from PilotGov API
+                      {t('discovery.live')}
                     </>
                   )}
                 </span>
                 <span className="text-xs text-emerald2-400 font-medium">
-                  {filtered.length} of {startups.length} DPIIT-verified startups
+                  {t('discovery.countSummary', { count: filtered.length, total: startups.length })}
                 </span>
               </div>
             </div>

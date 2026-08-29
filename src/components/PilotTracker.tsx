@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { CalendarDays, Loader2, WifiOff, ArrowRightCircle } from 'lucide-react';
 import { stagger, staggerItem } from '@/lib/motion';
 import { pilotColumns as fallbackColumns, PilotCard } from '@/lib/data';
@@ -12,6 +13,7 @@ interface PilotColumn {
 }
 
 export default function PilotTracker() {
+  const { t } = useTranslation();
   const [columns, setColumns] = useState<PilotColumn[]>(fallbackColumns);
   const [loading, setLoading] = useState(true);
   const [usingFallback, setUsingFallback] = useState(false);
@@ -61,14 +63,13 @@ export default function PilotTracker() {
         >
           <div>
             <motion.span variants={staggerItem} className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald2-400">
-              Pilot tracker
+              {t('pilot.eyebrow')}
             </motion.span>
             <motion.h2 variants={staggerItem} className="mt-4 text-3xl sm:text-4xl font-semibold tracking-tight text-white">
-              Track every pilot from application to scale
+              {t('pilot.title')}
             </motion.h2>
             <motion.p variants={staggerItem} className="mt-4 text-lg text-white/50 leading-relaxed">
-              A transparent board for departments and startups to follow pilot
-              progress, budgets, and milestones in real time.
+              {t('pilot.subtitle')}
             </motion.p>
           </div>
         </motion.div>
@@ -76,15 +77,15 @@ export default function PilotTracker() {
         <div className="flex items-center gap-2 mb-4 text-xs text-white/30">
           {loading ? (
             <>
-              <Loader2 className="h-3 w-3 animate-spin" /> Fetching pipeline…
+              <Loader2 className="h-3 w-3 animate-spin" /> {t('pilot.fetching')}
             </>
           ) : usingFallback ? (
             <>
               <WifiOff className="h-3 w-3 text-amber-400/70" />
-              <span className="text-amber-400/70">Backend offline — showing sample data</span>
+              <span className="text-amber-400/70">{t('pilot.offline')}</span>
             </>
           ) : (
-            <span className="text-emerald2-400">Live from PilotGov API</span>
+            <span className="text-emerald2-400">{t('pilot.live')}</span>
           )}
         </div>
 
@@ -103,7 +104,7 @@ export default function PilotTracker() {
                 <div className="flex items-center justify-between mb-4 px-1">
                   <div className="flex items-center gap-2">
                     <span className={`h-2 w-2 rounded-full ${col.accent.replace('text-', 'bg-')}`} />
-                    <span className="text-sm font-semibold text-white">{col.status}</span>
+                    <span className="text-sm font-semibold text-white">{t(`pilot.columns.${col.status}`, col.status)}</span>
                   </div>
                   <span className="text-xs text-white/30 tabular-nums">{col.cards.length}</span>
                 </div>
@@ -129,7 +130,7 @@ export default function PilotTracker() {
                       {/* Progress bar */}
                       <div className="mb-2">
                         <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-[10px] uppercase tracking-wider text-white/30">Progress</span>
+                          <span className="text-[10px] uppercase tracking-wider text-white/30">{t('pilot.progress')}</span>
                           <span className="text-[10px] text-white/40 tabular-nums">{card.progress}%</span>
                         </div>
                         <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
@@ -158,7 +159,7 @@ export default function PilotTracker() {
                           className="mt-3 w-full inline-flex items-center justify-center gap-1.5 rounded-md border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[11px] font-medium text-white/60 hover:text-white hover:border-white/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                           <ArrowRightCircle className="h-3 w-3" />
-                          Advance stage
+                          {t('pilot.advanceStage')}
                         </button>
                       )}
                     </div>
