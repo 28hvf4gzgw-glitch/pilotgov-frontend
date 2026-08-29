@@ -1,0 +1,145 @@
+{
+  "nav": {
+    "howItWorks": "How it works",
+    "forStartups": "For Startups",
+    "forGovernment": "For Government",
+    "trust": "Trust",
+    "signIn": "Sign in",
+    "bookDemo": "Book a Demo"
+  },
+  "hero": {
+    "badge": "A startup-friendly public procurement mechanism",
+    "titleLine1": "Reliable procurement for the world's most",
+    "titleLine2": "innovative startups",
+    "subtitle": "PilotGov connects government departments with vetted startups to discover, pilot, and scale innovative public-sector solutions — without the friction of traditional tendering.",
+    "ctaDept": "For Departments",
+    "ctaStartup": "For Startups",
+    "trust1": "ISO 27001 aligned",
+    "trust2": "Public-sector compliant",
+    "trust3": "Open data by default"
+  },
+  "partnerStrip": {
+    "trustedBy": "Trusted by public-sector innovation teams"
+  },
+  "problem": {
+    "eyebrow": "The problem",
+    "title": "Public procurement wasn't built for startups",
+    "subtitle": "Legacy tender processes favor large incumbents, demand multi-year track records, and take so long that most innovative firms never apply. The public sector loses, and citizens lose with it.",
+    "stat1Label": "of public tenders are won by startups today",
+    "stat1Note": "OECD avg., 2024",
+    "stat2Label": "average time from tender to contract signature",
+    "stat2Note": "across 12 jurisdictions",
+    "stat3Label": "of procurement rules create barriers for small firms",
+    "stat3Note": "eligibility thresholds"
+  },
+  "howItWorks": {
+    "eyebrow": "How it works",
+    "title": "From challenge to scaled contract in four steps",
+    "step1Title": "Discover",
+    "step1Desc": "Departments post a challenge; eligible startups are matched automatically by domain and capability.",
+    "step2Title": "Pilot",
+    "step2Desc": "Run a time-boxed, funded pilot with clear success metrics — no multi-year commitment required.",
+    "step3Title": "Verify",
+    "step3Desc": "Outcomes are measured against predefined KPIs and published on a transparent public dashboard.",
+    "step4Title": "Scale",
+    "step4Desc": "Verified pilots convert to scaled procurement contracts through a fast-track framework."
+  },
+  "postNeed": {
+    "eyebrow": "Identify",
+    "title": "Post a need, not a tender",
+    "subtitle": "Describe the outcome your department needs. Eligible startups are matched by domain and capability — no RFP required to get started.",
+    "labelDept": "Department",
+    "placeholderDept": "Start typing a department name…",
+    "labelTitle": "Need title",
+    "placeholderTitle": "Cold-chain vaccine tracking",
+    "labelDescription": "Description",
+    "placeholderDescription": "What outcome do you need, and what does success look like?",
+    "labelBudget": "Budget band",
+    "placeholderBudget": "₹30L",
+    "labelDomain": "Domain",
+    "submit": "Post need",
+    "fetching": "Fetching posted needs…",
+    "offline": "Backend offline — showing local data",
+    "live": "Live from PilotGov API"
+  },
+  "discovery": {
+    "eyebrow": "Discovery",
+    "title": "Find the right startup for every public challenge",
+    "subtitle": "Search across DPIIT-recognized startups by domain, capability, and eligibility status. Every match comes with a transparent score so departments can evaluate fit at a glance.",
+    "bullet1": "AI-matched by capability & domain",
+    "bullet2": "DPIIT-verified eligibility badges",
+    "bullet3": "Public track record of past pilots",
+    "searchPlaceholder": "Search by name, domain, or capability…",
+    "allDomains": "All domains",
+    "noResults": "No startups match your search.",
+    "clearFilters": "Clear all filters",
+    "match": "Match",
+    "mission": "Mission",
+    "trlLevel": "TRL Level",
+    "pastPilots": "Past Pilots",
+    "matchScore": "Match Score",
+    "pastPilotOutcomes": "Past Pilot Outcomes",
+    "requestPilot": "Request pilot with {{name}}",
+    "fetching": "Fetching…",
+    "offline": "Backend offline — showing sample data",
+    "live": "Live from PilotGov API",
+    "countSuffix": "of {{total}} DPIIT-verified startups"
+  },
+  "pilot": {
+    "eyebrow": "Pilot tracker",
+    "title": "Track every pilot from application to scale",
+    "subtitle": "A transparent board for departments and startups to follow pilot progress, budgets, and milestones in real time.",
+    "fetching": "Fetching pipeline…",
+    "offline": "Backend offline — showing sample data",
+    "live": "Live from PilotGov API",
+    "advanceStage": "Advance stage",
+    "progress": "Progress",
+    "columns": {
+      "Applied": "Applied",
+      "Piloting": "Piloting",
+      "Scaling": "Scaling",
+      "Completed": "Completed"
+    }
+  },
+  "trust": {
+    "eyebrow": "Trust & transparency",
+    "title": "Every pilot outcome, published publicly",
+    "subtitle": "Citizens deserve to see what works. PilotGov publishes pilot results, budgets, and KPI outcomes on an open dashboard — building accountability into every stage of public innovation.",
+    "dashboardTitle": "Public Outcomes Dashboard",
+    "live": "Live",
+    "reportingPeriod": "Reporting period: Jan–Jun 2026",
+    "viewFullReport": "View full report →",
+    "pilotGovLabel": "PilotGov: 45 days",
+    "traditionalLabel": "Traditional: 180 days",
+    "stat1Note": "avg. cost savings vs traditional vendors",
+    "stat2Note": "avg. time-to-deploy vs 180 days traditional",
+    "outcomeLabels": {
+      "Cost savings vs traditional vendor": "Cost savings vs traditional vendor",
+      "Time-to-deploy (PilotGov)": "Time-to-deploy (PilotGov)",
+      "Pilot success rate": "Pilot success rate",
+      "Scaled to full contract": "Scaled to full contract"
+    }
+  },
+  "footer": {
+    "heading": "Ready to pilot what's next?",
+    "subtitle": "Join the departments and startups building a faster path from idea to public impact.",
+    "bookDemo": "Book a Demo",
+    "readDocs": "Read the docs",
+    "tagline": "A startup-friendly public procurement mechanism.",
+    "colProduct": "Product",
+    "colGovernment": "Government",
+    "colStartups": "Startups",
+    "colAbout": "About",
+    "productLinks": ["How it works", "Discovery", "Pilot tracker", "Outcomes dashboard"],
+    "governmentLinks": ["For departments", "Compliance", "Security", "Case studies"],
+    "startupLinks": ["Apply to join", "Eligibility", "Pilot playbook", "Success stories"],
+    "aboutLinks": ["Mission", "Team", "Press", "Contact"],
+    "copyright": "© 2026 PilotGov. A public-sector innovation initiative.",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "security": "Security"
+  },
+  "language": {
+    "label": "Language"
+  }
+}
