@@ -1,6 +1,8 @@
 {
   "nav": {
     "howItWorks": "How it works",
+    "domains": "Domains",
+    "allDomains": "All Domains",
     "forStartups": "For Startups",
     "forGovernment": "For Government",
     "trust": "Trust",
@@ -181,5 +183,59 @@
   },
   "language": {
     "label": "Language"
+  },
+  "domains": {
+    "agritech": {
+      "title": "AgriTech",
+      "pitch": "Precision agriculture, climate risk modeling, and IoT-driven yield forecasting for sustainable farming and food security.",
+      "subtitle": "Discover verified startups modernizing agricultural infrastructure, supply chain tracking, and rural yield prediction."
+    },
+    "cleantech": {
+      "title": "CleanTech",
+      "pitch": "Solar microgrids, renewable energy storage, and smart grid automation for resilient municipal infrastructure.",
+      "subtitle": "Partner with clean energy innovators powering sustainable municipal operations and zero-emission public utilities."
+    },
+    "healthtech": {
+      "title": "HealthTech",
+      "pitch": "Offline-first electronic health records, telemedicine, and cold-chain monitoring for primary healthcare delivery.",
+      "subtitle": "Deploy digital health solutions tailored for primary health centres, remote diagnostics, and maternal-child care."
+    },
+    "smartMobility": {
+      "title": "Smart Mobility",
+      "pitch": "AI-powered urban traffic routing, transit optimization, and sustainable fleet management for modern cities.",
+      "subtitle": "Modernize urban transit with real-time congestion mitigation, adaptive signal control, and green fleet logistics."
+    },
+    "edtech": {
+      "title": "EdTech",
+      "pitch": "Vernacular digital classrooms, offline learning platforms, and adaptive curriculum tools for inclusive education.",
+      "subtitle": "Bridge educational divides with mother-tongue digital learning, school monitoring, and resilient offline tech."
+    }
+  },
+  "domainPage": {
+    "badge": "Domain Hub",
+    "backToHome": "Back to All Solutions",
+    "allDomains": "All Domains",
+    "stats": {
+      "avgMatchScore": "Average Match Score",
+      "avgMatchNote": "AI capability alignment",
+      "pastPilots": "Past Pilots Completed",
+      "pastPilotsNote": "across state & central depts",
+      "avgTrl": "Avg. TRL Readiness",
+      "avgTrlNote": "field-proven technology",
+      "dpiitVerified": "DPIIT Verified",
+      "dpiitVerifiedNote": "fully vetted & eligible"
+    },
+    "discoveryTitle": "Verified {{domain}} Startups",
+    "discoverySubtitle": "Explore pre-vetted startups ready for immediate deployment in public sector pilots.",
+    "searchPlaceholder": "Search within {{domain}} startups...",
+    "emptySearch": "No startups found matching your search in {{domain}}.",
+    "ctaSection": {
+      "title": "Need a customized {{domain}} solution for your department?",
+      "subtitle": "Post your challenge to initiate targeted matchmaking with DPIIT-verified innovators.",
+      "postNeed": "Post a {{domain}} Need",
+      "exploreMore": "Explore Other Domains",
+      "requestPilot": "Request Pilot"
+    }
   }
 }
+
