@@ -13,6 +13,10 @@ import {
   X,
   Loader2,
   WifiOff,
+  Info,
+  Sparkles,
+  CheckCircle2,
+  Layers,
 } from 'lucide-react';
 import { stagger, staggerItem, fadeIn } from '@/lib/motion';
 import { startups as fallbackStartups, Startup } from '@/lib/data';
@@ -33,6 +37,7 @@ export default function StartupDiscovery() {
   const [query, setQuery] = useState('');
   const [activeDomain, setActiveDomain] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
   const [startups, setStartups] = useState<Startup[]>(fallbackStartups);
   const [loading, setLoading] = useState(false);
@@ -240,12 +245,113 @@ export default function StartupDiscovery() {
                               </div>
                             </div>
 
-                            {/* Match score */}
-                            <div className="hidden sm:flex flex-col items-end shrink-0">
-                              <span className="text-[10px] uppercase tracking-wider text-white/30">{t('discovery.match')}</span>
-                              <span className={`text-lg font-semibold tabular-nums ${s.match >= 90 ? 'text-emerald2-400' : 'text-white'}`}>
-                                {s.match}
-                              </span>
+                            {/* Match score with Interactive Breakdown Tooltip */}
+                            <div
+                              className="relative hidden sm:flex flex-col items-end shrink-0"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <button
+                                type="button"
+                                onClick={() => setActiveTooltip(activeTooltip === s.name ? null : s.name)}
+                                onMouseEnter={() => setActiveTooltip(s.name)}
+                                onMouseLeave={() => setActiveTooltip(null)}
+                                title={t('discovery.matchTooltip.hint')}
+                                aria-label={t('discovery.matchTooltip.hint')}
+                                className="group/score flex flex-col items-end text-right rounded-lg p-1 -mr-1 hover:bg-white/[0.06] transition-all cursor-pointer focus:outline-none focus:ring-1 focus:ring-emerald2-400/40"
+                              >
+                                <span className="text-[10px] uppercase tracking-wider text-white/30 group-hover/score:text-emerald2-400 flex items-center gap-1 transition-colors">
+                                  <Sparkles className="h-2.5 w-2.5" />
+                                  {t('discovery.match')}
+                                </span>
+                                <span className={`text-lg font-semibold tabular-nums flex items-center gap-1 ${s.match >= 90 ? 'text-emerald2-400' : 'text-white'}`}>
+                                  {s.match}
+                                  <Info className="h-3 w-3 text-white/20 group-hover/score:text-emerald2-400 transition-colors" />
+                                </span>
+                              </button>
+
+                              {/* Tooltip / Popover */}
+                              <AnimatePresence>
+                                {activeTooltip === s.name && (
+                                  <motion.div
+                                    initial={{ opacity: 0, y: 6, scale: 0.95 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    exit={{ opacity: 0, y: 4, scale: 0.95 }}
+                                    transition={{ duration: 0.15 }}
+                                    className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-xl border border-white/15 bg-ink-900/95 backdrop-blur-xl p-4 shadow-2xl shadow-black/80 z-40 text-left cursor-default pointer-events-auto"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <div className="flex items-center justify-between pb-2 mb-3 border-b border-white/10">
+                                      <div className="flex items-center gap-1.5">
+                                        <Sparkles className="h-3.5 w-3.5 text-emerald2-400" />
+                                        <span className="text-xs font-semibold text-white">
+                                          {t('discovery.matchTooltip.title')} ({s.match}%)
+                                        </span>
+                                      </div>
+                                      <span className="text-[10px] font-mono text-emerald2-400 bg-emerald2-500/10 border border-emerald2-500/20 rounded px-1.5 py-0.5">
+                                        {s.name}
+                                      </span>
+                                    </div>
+
+                                    <ul className="space-y-2.5 text-xs">
+                                      {/* 1. Domain match */}
+                                      <li className="flex items-start gap-2">
+                                        <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald2-500/20 text-emerald2-400">
+                                          <CheckCircle2 className="h-3 w-3" />
+                                        </span>
+                                        <div>
+                                          <p className="font-medium text-white/90">
+                                            {t('discovery.matchTooltip.domainMatch')}
+                                          </p>
+                                          <p className="text-[11px] text-white/50 mt-0.5">
+                                            {activeDomain === s.domain || (query && s.domain.toLowerCase().includes(query.toLowerCase()))
+                                              ? t('discovery.matchTooltip.domainMatchExact', { domain: s.domain })
+                                              : t('discovery.matchTooltip.domainMatchHigh', { domain: s.domain })}
+                                          </p>
+                                        </div>
+                                      </li>
+
+                                      {/* 2. Capability overlap */}
+                                      <li className="flex items-start gap-2">
+                                        <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-sky-500/20 text-sky-400">
+                                          <Layers className="h-3 w-3" />
+                                        </span>
+                                        <div>
+                                          <p className="font-medium text-white/90">
+                                            {t('discovery.matchTooltip.capabilities')}
+                                          </p>
+                                          <div className="flex flex-wrap gap-1 mt-1">
+                                            {s.tags.map((tag) => (
+                                              <span key={tag} className="text-[10px] bg-white/10 text-white/80 rounded px-1.5 py-0.5">
+                                                {tag}
+                                              </span>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      </li>
+
+                                      {/* 3. Past pilot success */}
+                                      <li className="flex items-start gap-2">
+                                        <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-amber-400">
+                                          <History className="h-3 w-3" />
+                                        </span>
+                                        <div>
+                                          <p className="font-medium text-white/90">
+                                            {t('discovery.matchTooltip.pastPilots')}
+                                          </p>
+                                          <p className="text-[11px] text-white/50 mt-0.5">
+                                            {t('discovery.matchTooltip.pastPilotsDesc', { count: s.pastPilots.length })}
+                                          </p>
+                                          {s.pastPilots.length > 0 && (
+                                            <p className="text-[10px] text-emerald2-400/90 mt-1 italic">
+                                              "{s.pastPilots[0].outcome}"
+                                            </p>
+                                          )}
+                                        </div>
+                                      </li>
+                                    </ul>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
                             </div>
 
                             <ChevronDown className={`h-4 w-4 text-white/30 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />

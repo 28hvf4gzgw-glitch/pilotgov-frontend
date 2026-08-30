@@ -7,6 +7,7 @@ import PostNeed from '@/components/PostNeed';
 import StartupDiscovery from '@/components/StartupDiscovery';
 import PilotTracker from '@/components/PilotTracker';
 import TrustSection from '@/components/TrustSection';
+import ImpactCalculator from '@/components/ImpactCalculator';
 import Footer from '@/components/Footer';
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
         <StartupDiscovery />
         <PilotTracker />
         <TrustSection />
+        <ImpactCalculator />
       </main>
       <Footer />
     </div>

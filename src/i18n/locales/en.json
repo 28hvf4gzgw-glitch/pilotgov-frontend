@@ -90,6 +90,18 @@
       "DPIIT Verified": "DPIIT Verified",
       "Provisional": "Provisional",
       "Pending": "Pending"
+    },
+    "matchTooltip": {
+      "title": "Match Breakdown",
+      "hint": "Click or hover for match breakdown",
+      "domainMatch": "Domain alignment",
+      "domainMatchExact": "Exact match for {{domain}} challenge area",
+      "domainMatchHigh": "High relevance in {{domain}} sector",
+      "capabilities": "Capabilities & Tags",
+      "capabilitiesDesc": "Matched capabilities: {{tags}}",
+      "pastPilots": "Past pilot track record",
+      "pastPilotsDesc": "{{count}} verified public pilot(s) completed",
+      "outcomeHighlight": "Top outcome: {{outcome}}"
     }
   },
   "pilot": {
@@ -127,6 +139,26 @@
       "Pilot success rate": "Pilot success rate",
       "Scaled to full contract": "Scaled to full contract"
     }
+  },
+  "calculator": {
+    "eyebrow": "Impact Calculator",
+    "title": "Calculate your department's innovation savings",
+    "subtitle": "Estimate how much time and public budget your agency can save every year by piloting with verified startups through PilotGov instead of traditional RFP cycles.",
+    "sliderLabel": "Pilots per year",
+    "sliderUnit": "pilots / year",
+    "presetsLabel": "Quick presets",
+    "costSavingsTitle": "Estimated Cost Savings",
+    "costSavingsSubtitle": "Based on 34% avg. savings against ₹75L avg. traditional pilot cost",
+    "timeSavedTitle": "Procurement Time Saved",
+    "timeSavedSubtitle": "135 days (4.5 months) faster deployment per pilot",
+    "velocityTitle": "Procurement Speedup",
+    "velocityValue": "4× Faster",
+    "velocitySubtitle": "45 days PilotGov deployment vs 180 days traditional RFP",
+    "traditionalTimeline": "Traditional: 180 days / pilot",
+    "pilotgovTimeline": "PilotGov: 45 days / pilot",
+    "ctaTitle": "Ready to save on your next pilot?",
+    "ctaButton": "Post a Department Need",
+    "assumptions": "Assumptions: ₹75L average pilot budget, 34% verified cost efficiency vs legacy vendors, and 45-day deployment timeline benchmarked across active pilots."
   },
   "footer": {
     "heading": "Ready to pilot what's next?",
