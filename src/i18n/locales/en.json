@@ -6,6 +6,7 @@
     "forStartups": "For Startups",
     "forGovernment": "For Government",
     "trust": "Trust",
+    "impact": "Impact",
     "signIn": "Sign in",
     "bookDemo": "Book a Demo"
   },
@@ -235,6 +236,76 @@
       "postNeed": "Post a {{domain}} Need",
       "exploreMore": "Explore Other Domains",
       "requestPilot": "Request Pilot"
+    }
+  },
+  "assistant": {
+    "title": "PilotGov AI Assistant",
+    "subtitle": "Procurement & Pilot Guide",
+    "status": "Online",
+    "greeting": "Hello! I'm your PilotGov AI assistant. How can I help you with public sector pilots, startup discovery, or posting departmental challenges today?",
+    "placeholder": "Ask a question about pilots, startups, or procurement...",
+    "send": "Send message",
+    "close": "Close assistant",
+    "open": "Open AI Assistant",
+    "clearChat": "Clear conversation",
+    "suggestedTitle": "Suggested questions",
+    "thinking": "Thinking...",
+    "quick1": "How do I post a need?",
+    "quick2": "How does startup matching work?",
+    "quick3": "What happens after a pilot?",
+    "quick4": "How are startups vetted & verified?"
+  },
+  "impact": {
+    "eyebrow": "Impact & Scale",
+    "title": "Public procurement transformation at scale",
+    "subtitle": "Real-time metrics tracking departmental challenges, active pilots, and scaled public contracts across all innovation domains.",
+    "backToHome": "Back to Overview",
+    "hubBadge": "Public Sector Innovation Impact",
+    "fetching": "Fetching impact metrics…",
+    "offline": "Backend offline — showing sample data",
+    "live": "Live from PilotGov API",
+    "empty": "No impact metrics available yet.",
+    "stats": {
+      "needsPosted": "Needs Posted",
+      "needsPostedNote": "departmental challenges",
+      "activePilots": "Active Pilots",
+      "activePilotsNote": "live field deployments",
+      "contractsScaled": "Contracts Scaled",
+      "contractsScaledNote": "full procurement contracts",
+      "totalScaledValue": "Total Scaled Value",
+      "totalScaledValueNote": "cumulative procurement"
+    },
+    "funnel": {
+      "title": "Procurement Pipeline Funnel",
+      "subtitle": "Conversion progression from initial department need to fully scaled procurement contract.",
+      "posted": "Needs Posted",
+      "piloting": "Piloting",
+      "scaling": "Scaling",
+      "scaled": "Scaled Contracts",
+      "conversionRate": "Conversion rate",
+      "ofPosted": "of posted needs"
+    },
+    "domains": {
+      "title": "Needs by Domain",
+      "subtitle": "Distribution of innovation challenges across government priority sectors.",
+      "explore": "Explore Domain Hub",
+      "needsCount": "{{count}} needs",
+      "share": "{{pct}}% of total"
+    },
+    "contracts": {
+      "title": "Scaled Procurement Contracts",
+      "subtitle": "Verified pilot graduates that have transitioned into full public procurement contracts.",
+      "downloadPdf": "Download Contract PDF",
+      "downloadContract": "Download Contract",
+      "trlLevel": "TRL Level",
+      "contractValue": "Scaled Value",
+      "emptyContracts": "No scaled contracts recorded yet."
+    },
+    "cta": {
+      "title": "Ready to scale public innovation in your department?",
+      "subtitle": "Post a challenge to initiate targeted pilot matchmaking or review verified startup solutions ready for procurement.",
+      "postNeed": "Post a Department Need",
+      "exploreStartups": "Discover Startups"
     }
   }
 }

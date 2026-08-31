@@ -153,15 +153,12 @@ export default function DomainPage({ domain: domainProp }: DomainPageProps) {
   }, [resolvedDomain]);
 
   return (
-    <div className="min-h-screen bg-ink-950 text-white antialiased selection:bg-emerald2-500/30">
+    <div className="min-h-screen bg-transparent text-white antialiased selection:bg-emerald2-500/30">
       <Navbar />
 
       <main>
         {/* ===================== HERO SECTION ===================== */}
         <section className="relative min-h-[560px] sm:min-h-[620px] flex items-center overflow-hidden pt-20 pb-20 px-6 border-b border-white/5">
-          {/* Animated grid background */}
-          <div className="absolute inset-0 grid-bg animate-gridscroll radial-fade" />
-
           {/* Ambient gradient glow */}
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute left-1/2 top-1/4 h-[420px] w-[620px] -translate-x-1/2 rounded-full bg-emerald2-500/15 blur-[140px] animate-glow" />

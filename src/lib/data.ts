@@ -98,6 +98,7 @@ export const startups: Startup[] = [
 ];
 
 export interface PilotCard {
+  id?: string;
   startup: string;
   dept: string;
   title: string;
@@ -106,12 +107,125 @@ export interface PilotCard {
   date: string;
 }
 
+export interface ScaledContract {
+  id: string;
+  startup: string;
+  domain: string;
+  dept: string;
+  title: string;
+  value: string;
+  date: string;
+  trl: number;
+  eligibility: 'DPIIT Verified' | 'Provisional' | 'Pending';
+  description: string;
+}
+
+export interface ImpactSummary {
+  needsPosted: number;
+  activePilots: number;
+  contractsScaled: number;
+  totalScaledValue: string;
+  pipelineFunnel: {
+    posted: number;
+    piloting: number;
+    scaling: number;
+    scaled: number;
+  };
+  byDomain: Record<string, number>;
+  scaledContracts?: ScaledContract[];
+}
+
+export const fallbackScaledContracts: ScaledContract[] = [
+  {
+    id: 'cleangrid-solar-microgrids',
+    startup: 'CleanGrid Energy',
+    domain: 'CleanTech',
+    dept: 'Dept. of Urban Infrastructure',
+    title: 'Solar microgrids for 15 municipal zones',
+    value: '₹4.5 Cr',
+    date: 'Scaled Jun 2026',
+    trl: 9,
+    eligibility: 'DPIIT Verified',
+    description: '4.2MW distributed solar microgrids deployed across municipal zones with 99.4% uptime resilience.',
+  },
+  {
+    id: 'agrosense-crop-yield',
+    startup: 'AgroSense AI',
+    domain: 'AgriTech',
+    dept: 'Dept. of Rural Development',
+    title: 'Crop yield forecasting across 8 districts',
+    value: '₹3.8 Cr',
+    date: 'Scaled May 2026',
+    trl: 8,
+    eligibility: 'DPIIT Verified',
+    description: 'District-level climate risk and predictive agronomy platform integrated with state crop contingency frameworks.',
+  },
+  {
+    id: 'medtrack-offline-ehr',
+    startup: 'MedTrack Solutions',
+    domain: 'HealthTech',
+    dept: 'Dept. of Health & Family Welfare',
+    title: 'Offline EHR rollout in 120 primary health centres',
+    value: '₹2.9 Cr',
+    date: 'Scaled Apr 2026',
+    trl: 9,
+    eligibility: 'DPIIT Verified',
+    description: 'Offline-first EHR platform linked with Ayushman Bharat ABHA IDs, maintaining zero data loss during connectivity outages.',
+  },
+  {
+    id: 'urbanflow-traffic-routing',
+    startup: 'UrbanFlow Logistics',
+    domain: 'Smart Mobility',
+    dept: 'Dept. of Urban Infrastructure',
+    title: 'AI traffic routing pilot — 3 corridor cities',
+    value: '₹2.1 Cr',
+    date: 'Scaled Mar 2026',
+    trl: 7,
+    eligibility: 'DPIIT Verified',
+    description: 'Adaptive traffic signal scheduling and routing algorithm reducing average corridor commute times by 22%.',
+  },
+  {
+    id: 'edubridge-digital-classrooms',
+    startup: 'EduBridge',
+    domain: 'EdTech',
+    dept: 'Dept. of School Education',
+    title: 'Vernacular digital classrooms for 350 rural schools',
+    value: '₹1.5 Cr',
+    date: 'Scaled Feb 2026',
+    trl: 8,
+    eligibility: 'DPIIT Verified',
+    description: 'Mother-tongue digital learning modules with offline sync improving curriculum completion rates from 28% to 71%.',
+  },
+];
+
+export const fallbackImpactSummary: ImpactSummary = {
+  needsPosted: 18,
+  activePilots: 7,
+  contractsScaled: 5,
+  totalScaledValue: '₹14.8 Cr',
+  pipelineFunnel: {
+    posted: 18,
+    piloting: 7,
+    scaling: 5,
+    scaled: 5,
+  },
+  byDomain: {
+    AgriTech: 6,
+    HealthTech: 5,
+    CleanTech: 4,
+    'Smart Mobility': 3,
+    EdTech: 2,
+  },
+  scaledContracts: fallbackScaledContracts,
+};
+
 export const pilotColumns: { status: string; accent: string; cards: PilotCard[] }[] = [
   {
     status: 'Applied',
     accent: 'text-sky-400',
     cards: [
       {
+        id: 'edubridge-digital-classrooms',
         startup: 'EduBridge',
         dept: 'Dept. of Rural Development',
         title: 'Vernacular e-learning for 240 village schools',
@@ -126,6 +240,7 @@ export const pilotColumns: { status: string; accent: string; cards: PilotCard[] 
     accent: 'text-amber-400',
     cards: [
       {
+        id: 'agrosense-crop-yield',
         startup: 'AgroSense AI',
         dept: 'Dept. of Rural Development',
         title: 'Crop yield forecasting across 8 districts',
@@ -134,6 +249,7 @@ export const pilotColumns: { status: string; accent: string; cards: PilotCard[] 
         date: 'Pilot started Jan 2026',
       },
       {
+        id: 'medtrack-offline-ehr',
         startup: 'MedTrack Solutions',
         dept: 'Dept. of Health & Family Welfare',
         title: 'Offline EHR rollout in 50 primary health centres',
@@ -148,6 +264,7 @@ export const pilotColumns: { status: string; accent: string; cards: PilotCard[] 
     accent: 'text-emerald-400',
     cards: [
       {
+        id: 'cleangrid-solar-microgrids',
         startup: 'CleanGrid Energy',
         dept: 'Dept. of Urban Infrastructure',
         title: 'Solar microgrids for 15 municipal zones',
@@ -162,6 +279,7 @@ export const pilotColumns: { status: string; accent: string; cards: PilotCard[] 
     accent: 'text-white/60',
     cards: [
       {
+        id: 'urbanflow-traffic-routing',
         startup: 'UrbanFlow Logistics',
         dept: 'Dept. of Urban Infrastructure',
         title: 'AI traffic routing pilot — 3 corridor cities',

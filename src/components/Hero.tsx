@@ -7,9 +7,6 @@ export default function Hero() {
   const { t } = useTranslation();
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
-      {/* Animated grid background */}
-      <div className="absolute inset-0 grid-bg animate-gridscroll radial-fade" />
-
       {/* Ambient gradient glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-1/4 h-[420px] w-[620px] -translate-x-1/2 rounded-full bg-emerald2-500/15 blur-[140px] animate-glow" />

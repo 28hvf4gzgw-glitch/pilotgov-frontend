@@ -12,6 +12,9 @@ import TrustSection from '@/components/TrustSection';
 import ImpactCalculator from '@/components/ImpactCalculator';
 import Footer from '@/components/Footer';
 import DomainPage from '@/components/DomainPage';
+import ImpactDashboard from '@/components/ImpactDashboard';
+import AnimatedBackground from '@/components/AnimatedBackground';
+import AssistantWidget from '@/components/AssistantWidget';
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -32,7 +35,7 @@ function ScrollToTop() {
 
 function HomePage() {
   return (
-    <div className="min-h-screen bg-ink-950 text-white antialiased selection:bg-emerald2-500/30">
+    <div className="min-h-screen bg-transparent text-white antialiased selection:bg-emerald2-500/30">
       <Navbar />
       <main>
         <Hero />
@@ -54,8 +57,12 @@ export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      {/* Site-wide persistent background */}
+      <AnimatedBackground />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/impact" element={<ImpactDashboard />} />
+        <Route path="/scale" element={<ImpactDashboard />} />
         <Route path="/domains/agritech" element={<DomainPage domain="AgriTech" />} />
         <Route path="/domains/cleantech" element={<DomainPage domain="CleanTech" />} />
         <Route path="/domains/healthtech" element={<DomainPage domain="HealthTech" />} />
@@ -64,7 +71,10 @@ export default function App() {
         <Route path="/domains/:slug" element={<DomainPage />} />
         <Route path="*" element={<HomePage />} />
       </Routes>
+      {/* Site-wide floating AI assistant widget */}
+      <AssistantWidget />
     </BrowserRouter>
   );
 }
+
 

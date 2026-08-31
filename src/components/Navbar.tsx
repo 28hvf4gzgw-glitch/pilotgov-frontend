@@ -174,6 +174,18 @@ export default function Navbar() {
               {t(`nav.${l.key}`)}
             </a>
           ))}
+
+          {/* Impact Route Link */}
+          <Link
+            to="/impact"
+            className={`text-sm transition-colors duration-200 ${
+              location.pathname === '/impact'
+                ? 'text-emerald2-400 font-semibold'
+                : 'text-white/65 hover:text-white'
+            }`}
+          >
+            {t('nav.impact')}
+          </Link>
         </div>
 
         {/* Right Actions */}
@@ -251,6 +263,16 @@ export default function Navbar() {
                   {t(`nav.${l.key}`)}
                 </a>
               ))}
+              <Link
+                to="/impact"
+                className={`block text-sm py-1 transition-colors ${
+                  location.pathname === '/impact'
+                    ? 'text-emerald2-400 font-semibold'
+                    : 'text-white/70 hover:text-white'
+                }`}
+              >
+                {t('nav.impact')}
+              </Link>
             </div>
 
             {/* Mobile Actions */}
