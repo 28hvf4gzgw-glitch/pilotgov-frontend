@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import {
   Search,
   ShieldCheck,
@@ -19,8 +20,10 @@ import {
   Layers,
 } from 'lucide-react';
 import { stagger, staggerItem, fadeIn } from '@/lib/motion';
-import { startups as fallbackStartups, Startup } from '@/lib/data';
+import { startups as fallbackStartups, Startup, PilotColumn } from '@/lib/data';
+import { departments } from '@/lib/departments';
 import { api, ApiError } from '@/lib/api';
+import { usePilotBoard } from '@/context/PilotBoardContext';
 
 const badgeStyles: Record<string, string> = {
   'DPIIT Verified': 'bg-emerald2-500/10 text-emerald2-400 border-emerald2-500/25',
@@ -32,8 +35,41 @@ const badgeStyles: Record<string, string> = {
 // instantly, even before the live fetch resolves.
 const allDomains = [...new Set(fallbackStartups.map((s) => s.domain))];
 
-export default function StartupDiscovery() {
+interface StartupDiscoveryProps {
+  needId?: string;
+  needTitle?: string;
+  needDept?: string;
+  needBudget?: string;
+  onClearNeed?: () => void;
+}
+
+export default function StartupDiscovery({
+  needId: propNeedId,
+  needTitle: propNeedTitle,
+  needDept: propNeedDept,
+  needBudget: propNeedBudget,
+  onClearNeed,
+}: StartupDiscoveryProps = {}) {
   const { t } = useTranslation();
+  const pilotBoard = usePilotBoard();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const needId = propNeedId ?? searchParams.get('needId') ?? undefined;
+  const needTitle = propNeedTitle ?? searchParams.get('needTitle') ?? undefined;
+  const needDept = propNeedDept ?? searchParams.get('needDept') ?? undefined;
+  const needBudget = propNeedBudget ?? searchParams.get('needBudget') ?? undefined;
+
+  const handleClearNeed = () => {
+    if (onClearNeed) {
+      onClearNeed();
+    }
+    if (searchParams.has('needId') || searchParams.has('needTitle')) {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('needId');
+      nextParams.delete('needTitle');
+      setSearchParams(nextParams);
+    }
+  };
+
   const [query, setQuery] = useState('');
   const [activeDomain, setActiveDomain] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -42,6 +78,117 @@ export default function StartupDiscovery() {
   const [startups, setStartups] = useState<Startup[]>(fallbackStartups);
   const [loading, setLoading] = useState(false);
   const [usingFallback, setUsingFallback] = useState(false);
+
+  const [appliedStartups, setAppliedStartups] = useState<Set<string>>(new Set());
+  const [requestingStartups, setRequestingStartups] = useState<Set<string>>(new Set());
+  const [cardErrors, setCardErrors] = useState<Record<string, string>>({});
+
+  // Confirmation modal state for standalone discovery requests
+  const [modalStartup, setModalStartup] = useState<Startup | null>(null);
+  const [modalDept, setModalDept] = useState('');
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalBudget, setModalBudget] = useState('₹25L');
+  const [modalDeptSuggestions, setModalDeptSuggestions] = useState<string[]>([]);
+  const [showModalDeptSuggestions, setShowModalDeptSuggestions] = useState(false);
+  const modalDeptRef = useRef<HTMLDivElement>(null);
+
+  const handleModalDeptChange = (value: string) => {
+    setModalDept(value);
+    if (value.trim().length === 0) {
+      setModalDeptSuggestions([]);
+      setShowModalDeptSuggestions(false);
+      return;
+    }
+    const filtered = departments
+      .filter((d) => d.toLowerCase().includes(value.toLowerCase()))
+      .slice(0, 6);
+    setModalDeptSuggestions(filtered);
+    setShowModalDeptSuggestions(filtered.length > 0);
+  };
+
+  const handleModalDeptSelect = (dept: string) => {
+    setModalDept(dept);
+    setModalDeptSuggestions([]);
+    setShowModalDeptSuggestions(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (modalDeptRef.current && !modalDeptRef.current.contains(e.target as Node)) {
+        setShowModalDeptSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleRequestClick = (s: Startup) => {
+    if (needId) {
+      // In active need context: directly submit with need data
+      submitPilotRequest(s, needDept, needTitle || s.pitch, needBudget || '₹25L', needId);
+    } else {
+      // Standalone discovery: open confirmation modal without guessing
+      setModalStartup(s);
+      setModalDept(needDept || '');
+      setModalTitle(s.pitch);
+      setModalBudget(needBudget || '₹25L');
+      setModalDeptSuggestions([]);
+      setShowModalDeptSuggestions(false);
+    }
+  };
+
+  const submitPilotRequest = async (
+    s: Startup,
+    dept?: string,
+    title?: string,
+    budget?: string,
+    activeNeedId?: string,
+  ) => {
+    // Immediately disable this specific button / modal action and show spinner
+    setRequestingStartups((prev) => new Set(prev).add(s.name));
+    setCardErrors((prev) => {
+      const next = { ...prev };
+      delete next[s.name];
+      return next;
+    });
+
+    try {
+      const payload = {
+        startup: s.name,
+        dept: dept || `Dept. of ${s.domain}`,
+        title: title || s.pitch,
+        budget: budget || '₹25L',
+        ...(activeNeedId ? { needId: activeNeedId } : {}),
+      };
+
+      const updatedPipeline = await api<PilotColumn[]>('/pilot/request', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+
+      // On success, permanently mark startup as applied for this session
+      setAppliedStartups((prev) => new Set(prev).add(s.name));
+      if (pilotBoard?.setColumns && Array.isArray(updatedPipeline)) {
+        pilotBoard.setColumns(updatedPipeline);
+      }
+      setModalStartup(null);
+    } catch (err) {
+      console.error('Failed to request pilot', err);
+      const message =
+        err instanceof ApiError
+          ? err.message
+          : err instanceof Error
+          ? err.message
+          : t('discovery.requestError');
+      setCardErrors((prev) => ({ ...prev, [s.name]: message }));
+    } finally {
+      setRequestingStartups((prev) => {
+        const next = new Set(prev);
+        next.delete(s.name);
+        return next;
+      });
+    }
+  };
 
   // Refetch whenever the search or domain filter changes. A short debounce
   // avoids firing a request on every keystroke.
@@ -53,6 +200,7 @@ export default function StartupDiscovery() {
         const params = new URLSearchParams();
         if (query.trim()) params.set('query', query.trim());
         if (activeDomain) params.set('domain', activeDomain);
+        if (needId) params.set('needId', needId);
 
         const data = await api<Startup[]>(
           `/procure/startups?${params.toString()}`,
@@ -85,7 +233,7 @@ export default function StartupDiscovery() {
       clearTimeout(timeout);
       controller.abort();
     };
-  }, [query, activeDomain]);
+  }, [query, activeDomain, needId]);
 
   const filtered = startups;
 
@@ -184,6 +332,27 @@ export default function StartupDiscovery() {
                 </div>
               </div>
 
+              {/* Active Need Scope Banner */}
+              {needTitle && (
+                <div className="flex items-center justify-between gap-2 px-5 py-2.5 bg-emerald2-500/10 border-b border-emerald2-500/20 text-xs">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="flex h-2 w-2 rounded-full bg-emerald2-400 animate-pulse" />
+                    <span className="text-white/60 truncate">
+                      {t('discovery.showingMatchesFor')}{' '}
+                      <strong className="font-semibold text-emerald2-400">{needTitle}</strong>
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleClearNeed}
+                    className="text-white/40 hover:text-white transition-colors text-[11px] flex items-center gap-1 shrink-0 ml-2"
+                    title={t('discovery.clearScope')}
+                  >
+                    <X className="h-3 w-3" />
+                    <span>{t('discovery.clearScope')}</span>
+                  </button>
+                </div>
+              )}
+
               {/* List */}
               <div className="divide-y divide-white/5">
                 <AnimatePresence mode="popLayout">
@@ -206,6 +375,9 @@ export default function StartupDiscovery() {
                   ) : (
                     filtered.map((s) => {
                       const isOpen = expanded === s.name;
+                      const isApplied = appliedStartups.has(s.name);
+                      const isRequesting = requestingStartups.has(s.name);
+                      const errorMsg = cardErrors[s.name];
                       return (
                         <motion.div
                           key={s.name}
@@ -424,10 +596,41 @@ export default function StartupDiscovery() {
                                   </div>
 
                                   {/* CTA */}
-                                  <button className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white/[0.04] border border-white/10 px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] hover:border-white/20 transition-all">
-                                    {t('discovery.requestPilot', { name: s.name })}
-                                    <ArrowUpRight className="h-3.5 w-3.5" />
-                                  </button>
+                                  {isApplied ? (
+                                    <button
+                                      disabled
+                                      className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-emerald2-500/10 border border-emerald2-500/25 px-4 py-2.5 text-sm font-medium text-emerald2-400 cursor-default opacity-90 transition-all"
+                                    >
+                                      <CheckCircle2 className="h-4 w-4 text-emerald2-400" />
+                                      <span>{t('discovery.applied', 'Applied ✓')}</span>
+                                    </button>
+                                  ) : isRequesting ? (
+                                    <button
+                                      disabled
+                                      className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white/[0.04] border border-white/10 px-4 py-2.5 text-sm font-medium text-white/50 cursor-not-allowed transition-all"
+                                    >
+                                      <Loader2 className="h-3.5 w-3.5 animate-spin text-white/50" />
+                                      <span className="opacity-70">{t('discovery.requesting', 'Requesting...')}</span>
+                                    </button>
+                                  ) : (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleRequestClick(s);
+                                      }}
+                                      className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white/[0.04] border border-white/10 px-4 py-2.5 text-sm font-medium text-white hover:bg-white/[0.08] hover:border-white/20 transition-all"
+                                    >
+                                      <span>{t('discovery.requestPilot', { name: s.name })}</span>
+                                      <ArrowUpRight className="h-3.5 w-3.5 text-white/70" />
+                                    </button>
+                                  )}
+
+                                  {errorMsg && !isRequesting && !isApplied && (
+                                    <div className="mt-2 flex items-center gap-1.5 text-xs text-amber-400/90 bg-amber-500/10 border border-amber-500/20 rounded-md px-3 py-1.5">
+                                      <WifiOff className="h-3 w-3 shrink-0 text-amber-400/70" />
+                                      <span>{errorMsg}</span>
+                                    </div>
+                                  )}
                                 </div>
                               </motion.div>
                             )}
@@ -467,6 +670,160 @@ export default function StartupDiscovery() {
           </motion.div>
         </motion.div>
       </div>
+
+      {/* Standalone Discovery Pilot Request Confirmation Modal */}
+      <AnimatePresence>
+        {modalStartup && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm"
+            onClick={() => {
+              if (!requestingStartups.has(modalStartup.name)) {
+                setModalStartup(null);
+              }
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 12 }}
+              transition={{ duration: 0.2 }}
+              className="relative w-full max-w-lg rounded-2xl border border-white/10 bg-ink-900 p-6 shadow-2xl shadow-black/90 text-left"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between gap-4 pb-4 border-b border-white/10">
+                <div>
+                  <h3 className="text-lg font-semibold text-white">
+                    {t('discovery.confirmTitle', 'Confirm pilot request')}
+                  </h3>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-xs text-white/50">{modalStartup.name}</span>
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald2-500/10 text-emerald2-400 border border-emerald2-500/25">
+                      {modalStartup.domain}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setModalStartup(null)}
+                  disabled={requestingStartups.has(modalStartup.name)}
+                  className="rounded-lg p-1 text-white/40 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-30"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Form */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!modalDept.trim() || !modalTitle.trim() || !modalBudget.trim()) return;
+                  submitPilotRequest(modalStartup, modalDept, modalTitle, modalBudget);
+                }}
+                className="mt-4 space-y-4"
+              >
+                {/* Department autocomplete field */}
+                <div ref={modalDeptRef} className="relative">
+                  <label className="text-xs font-medium text-white/60 mb-1.5 block">
+                    {t('discovery.deptLabel', 'Department')} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={modalDept}
+                    onChange={(e) => handleModalDeptChange(e.target.value)}
+                    onFocus={() => modalDept.trim().length > 0 && setShowModalDeptSuggestions(modalDeptSuggestions.length > 0)}
+                    placeholder={t('discovery.deptPlaceholder', 'Enter department name…')}
+                    className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-emerald2-500/40 transition-colors"
+                  />
+                  {showModalDeptSuggestions && (
+                    <div className="absolute z-20 mt-1 w-full rounded-lg border border-white/10 bg-ink-850 shadow-2xl shadow-black/90 overflow-hidden max-h-48 overflow-y-auto">
+                      {modalDeptSuggestions.map((d) => (
+                        <button
+                          key={d}
+                          type="button"
+                          onClick={() => handleModalDeptSelect(d)}
+                          className="w-full text-left px-3 py-2 text-xs text-white/80 hover:bg-white/[0.08] hover:text-white transition-colors border-b border-white/5 last:border-b-0"
+                        >
+                          {d}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Budget field */}
+                <div>
+                  <label className="text-xs font-medium text-white/60 mb-1.5 block">
+                    {t('discovery.budgetLabel', 'Budget')} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={modalBudget}
+                    onChange={(e) => setModalBudget(e.target.value)}
+                    placeholder={t('discovery.budgetPlaceholder', 'e.g. ₹25L')}
+                    className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-emerald2-500/40 transition-colors"
+                  />
+                </div>
+
+                {/* Title / Pitch field */}
+                <div>
+                  <label className="text-xs font-medium text-white/60 mb-1.5 block">
+                    {t('discovery.titleLabel', 'Pilot title / description')} *
+                  </label>
+                  <textarea
+                    required
+                    rows={3}
+                    value={modalTitle}
+                    onChange={(e) => setModalTitle(e.target.value)}
+                    className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-emerald2-500/40 transition-colors resize-none"
+                  />
+                </div>
+
+                {/* Error Banner if any */}
+                {cardErrors[modalStartup.name] && (
+                  <div className="flex items-center gap-1.5 text-xs text-amber-400/90 bg-amber-500/10 border border-amber-500/20 rounded-md px-3 py-2">
+                    <WifiOff className="h-3.5 w-3.5 shrink-0 text-amber-400/70" />
+                    <span>{cardErrors[modalStartup.name]}</span>
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setModalStartup(null)}
+                    disabled={requestingStartups.has(modalStartup.name)}
+                    className="px-4 py-2 text-sm font-medium text-white/60 hover:text-white transition-colors disabled:opacity-40"
+                  >
+                    {t('discovery.cancel', 'Cancel')}
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={
+                      requestingStartups.has(modalStartup.name) ||
+                      !modalDept.trim() ||
+                      !modalTitle.trim() ||
+                      !modalBudget.trim()
+                    }
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald2-500 hover:bg-emerald2-400 px-4 py-2 text-sm font-semibold text-ink-950 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {requestingStartups.has(modalStartup.name) ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin text-ink-950" />
+                        <span>{t('discovery.requesting', 'Requesting...')}</span>
+                      </>
+                    ) : (
+                      <span>{t('discovery.confirm', 'Confirm request')}</span>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

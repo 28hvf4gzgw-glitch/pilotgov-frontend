@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
@@ -15,6 +15,8 @@ import DomainPage from '@/components/DomainPage';
 import ImpactDashboard from '@/components/ImpactDashboard';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import AssistantWidget from '@/components/AssistantWidget';
+
+import { PilotBoardProvider } from '@/context/PilotBoardContext';
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -34,22 +36,51 @@ function ScrollToTop() {
 }
 
 function HomePage() {
+  const [activeNeed, setActiveNeed] = useState<{
+    id: string;
+    title: string;
+    dept?: string;
+    budget?: string;
+    domain?: string;
+  } | null>(null);
+
+  const handleNeedCreated = (need: {
+    id: string;
+    title: string;
+    dept?: string;
+    budget?: string;
+    domain?: string;
+  }) => {
+    setActiveNeed(need);
+    setTimeout(() => {
+      document.getElementById('for-government')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+
   return (
-    <div className="min-h-screen bg-transparent text-white antialiased selection:bg-emerald2-500/30">
-      <Navbar />
-      <main>
-        <Hero />
-        <PartnerStrip />
-        <ProblemStatement />
-        <HowItWorks />
-        <PostNeed />
-        <StartupDiscovery />
-        <PilotTracker />
-        <TrustSection />
-        <ImpactCalculator />
-      </main>
-      <Footer />
-    </div>
+    <PilotBoardProvider>
+      <div className="min-h-screen bg-transparent text-white antialiased selection:bg-emerald2-500/30">
+        <Navbar />
+        <main>
+          <Hero />
+          <PartnerStrip />
+          <ProblemStatement />
+          <HowItWorks />
+          <PostNeed onNeedCreated={handleNeedCreated} />
+          <StartupDiscovery
+            needId={activeNeed?.id}
+            needTitle={activeNeed?.title}
+            needDept={activeNeed?.dept}
+            needBudget={activeNeed?.budget}
+            onClearNeed={() => setActiveNeed(null)}
+          />
+          <PilotTracker />
+          <TrustSection />
+          <ImpactCalculator />
+        </main>
+        <Footer />
+      </div>
+    </PilotBoardProvider>
   );
 }
 

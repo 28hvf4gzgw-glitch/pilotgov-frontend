@@ -33,7 +33,11 @@ const FALLBACK_NEEDS: Need[] = [
 
 const domains = ['AgriTech', 'CleanTech', 'HealthTech', 'Smart Mobility', 'EdTech'];
 
-export default function PostNeed() {
+interface PostNeedProps {
+  onNeedCreated?: (need: { id: string; title: string; dept?: string; budget?: string; domain?: string }) => void;
+}
+
+export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
   const { t } = useTranslation();
   const [needs, setNeeds] = useState<Need[]>(FALLBACK_NEEDS);
   const [usingFallback, setUsingFallback] = useState(false);
@@ -60,15 +64,14 @@ export default function PostNeed() {
       setShowDeptSuggestions(false);
       return;
     }
-    const matches = departments
-      .filter((d) => d.toLowerCase().includes(value.toLowerCase()))
-      .slice(0, 6);
-    setDeptSuggestions(matches);
-    setShowDeptSuggestions(matches.length > 0);
+    const filtered = departments.filter((d) => d.toLowerCase().includes(value.toLowerCase()));
+    setDeptSuggestions(filtered);
+    setShowDeptSuggestions(filtered.length > 0);
   };
 
-  const selectDept = (value: string) => {
-    setForm({ ...form, dept: value });
+  const selectDept = (dept: string) => {
+    setForm({ ...form, dept });
+    setDeptSuggestions([]);
     setShowDeptSuggestions(false);
   };
 
@@ -116,6 +119,13 @@ export default function PostNeed() {
       setNeeds((prev) => [created, ...prev]);
       setUsingFallback(false);
       setForm({ dept: '', title: '', description: '', budget: '', domain: domains[0] });
+      onNeedCreated?.({
+        id: created.id,
+        title: created.title,
+        dept: created.dept,
+        budget: created.budget,
+        domain: created.domain,
+      });
     } catch {
       // Backend not reachable — still show it locally so the demo doesn't stall
       const localNeed: Need = {
@@ -127,6 +137,13 @@ export default function PostNeed() {
       setNeeds((prev) => [localNeed, ...prev]);
       setUsingFallback(true);
       setForm({ dept: '', title: '', description: '', budget: '', domain: domains[0] });
+      onNeedCreated?.({
+        id: localNeed.id,
+        title: localNeed.title,
+        dept: localNeed.dept,
+        budget: localNeed.budget,
+        domain: localNeed.domain,
+      });
     } finally {
       setSubmitting(false);
     }

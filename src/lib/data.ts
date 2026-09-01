@@ -5,6 +5,7 @@ export interface PastPilot {
 }
 
 export interface Startup {
+  id?: string;
   name: string;
   domain: string;
   tags: string[];
@@ -19,6 +20,7 @@ export interface Startup {
 
 export const startups: Startup[] = [
   {
+    id: 'agrosense-ai',
     name: 'AgroSense AI',
     domain: 'AgriTech',
     tags: ['IoT', 'AI'],
@@ -35,6 +37,7 @@ export const startups: Startup[] = [
     ],
   },
   {
+    id: 'cleangrid-energy',
     name: 'CleanGrid Energy',
     domain: 'CleanTech',
     tags: ['Grid', 'Solar'],
@@ -50,6 +53,7 @@ export const startups: Startup[] = [
     ],
   },
   {
+    id: 'medtrack-solutions',
     name: 'MedTrack Solutions',
     domain: 'HealthTech',
     tags: ['EHR', 'Mobile'],
@@ -67,6 +71,7 @@ export const startups: Startup[] = [
     ],
   },
   {
+    id: 'urbanflow-logistics',
     name: 'UrbanFlow Logistics',
     domain: 'Smart Mobility',
     tags: ['Routing', 'AI'],
@@ -81,6 +86,7 @@ export const startups: Startup[] = [
     ],
   },
   {
+    id: 'edubridge',
     name: 'EduBridge',
     domain: 'EdTech',
     tags: ['Learning', 'Vernacular'],
@@ -98,13 +104,15 @@ export const startups: Startup[] = [
 ];
 
 export interface PilotCard {
-  id?: string;
+  id: string;
   startup: string;
   dept: string;
   title: string;
   budget: string;
   progress: number;
   date: string;
+  status?: string;
+  scaledContractId?: string;
 }
 
 export interface ScaledContract {
@@ -219,7 +227,13 @@ export const fallbackImpactSummary: ImpactSummary = {
   scaledContracts: fallbackScaledContracts,
 };
 
-export const pilotColumns: { status: string; accent: string; cards: PilotCard[] }[] = [
+export interface PilotColumn {
+  status: string;
+  accent: string;
+  cards: PilotCard[];
+}
+
+export const pilotColumns: PilotColumn[] = [
   {
     status: 'Applied',
     accent: 'text-sky-400',
@@ -286,6 +300,8 @@ export const pilotColumns: { status: string; accent: string; cards: PilotCard[] 
         budget: '₹62L',
         progress: 100,
         date: 'Completed Apr 2026',
+        status: 'Completed',
+        scaledContractId: 'urbanflow-traffic-routing',
       },
     ],
   },
