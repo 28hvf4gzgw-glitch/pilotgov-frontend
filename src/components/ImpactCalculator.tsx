@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // Baseline assumptions for traditional (non-PilotGov) public procurement,
 // used only to compute a relative "time/cost saved" projection.
@@ -7,13 +8,16 @@ const TRADITIONAL_OVERHEAD_PCT = 0.18; // admin/process overhead as % of contrac
 const PILOTGOV_CYCLE_DAYS = 45; // Identify -> Discover -> Pilot -> Scale, avg.
 const PILOTGOV_OVERHEAD_PCT = 0.06;
 
-function formatINR(value: number) {
-  if (value >= 1_00_00_000) return `₹${(value / 1_00_00_000).toFixed(2)} Cr`;
-  if (value >= 1_00_000) return `₹${(value / 1_00_000).toFixed(2)} L`;
+function formatINR(value: number, t: (key: string, options?: Record<string, unknown>) => string) {
+  const cr = t('impactCalculator.units.crore', { defaultValue: 'Cr' });
+  const l = t('impactCalculator.units.lakh', { defaultValue: 'L' });
+  if (value >= 1_00_00_000) return `₹${(value / 1_00_00_000).toFixed(2)} ${cr}`;
+  if (value >= 1_00_000) return `₹${(value / 1_00_000).toFixed(2)} ${l}`;
   return `₹${value.toLocaleString('en-IN')}`;
 }
 
 export default function ImpactCalculator() {
+  const { t } = useTranslation();
   const [needsPerYear, setNeedsPerYear] = useState(12);
   const [avgContractValue, setAvgContractValue] = useState(2500000); // ₹25L default
 
@@ -47,15 +51,13 @@ export default function ImpactCalculator() {
       <div className="mx-auto max-w-5xl">
         <div className="text-center mb-12">
           <span className="inline-block rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1 text-xs font-medium tracking-wide text-emerald-400 uppercase">
-            Impact Calculator
+            {t('impactCalculator.badge')}
           </span>
           <h2 className="mt-4 text-3xl md:text-4xl font-semibold text-white">
-            See what your department could save
+            {t('impactCalculator.title')}
           </h2>
           <p className="mt-3 text-white/60 max-w-2xl mx-auto">
-            Estimate the time and cost impact of routing procurement needs through
-            PilotGov's Identify → Discover → Pilot → Scale pipeline instead of a
-            traditional tender process.
+            {t('impactCalculator.subtitle')}
           </p>
         </div>
 
@@ -65,7 +67,7 @@ export default function ImpactCalculator() {
             <div>
               <div className="flex justify-between mb-2">
                 <label htmlFor="needsPerYear" className="text-sm font-medium text-white/80">
-                  Procurement needs posted per year
+                  {t('impactCalculator.needsPerYearLabel')}
                 </label>
                 <span className="text-emerald-400 font-semibold">{needsPerYear}</span>
               </div>
@@ -88,10 +90,10 @@ export default function ImpactCalculator() {
             <div>
               <div className="flex justify-between mb-2">
                 <label htmlFor="avgContractValue" className="text-sm font-medium text-white/80">
-                  Avg. contract value per need
+                  {t('impactCalculator.avgContractValueLabel')}
                 </label>
                 <span className="text-emerald-400 font-semibold">
-                  {formatINR(avgContractValue)}
+                  {formatINR(avgContractValue, t)}
                 </span>
               </div>
               <input
@@ -105,16 +107,16 @@ export default function ImpactCalculator() {
                 className="w-full accent-emerald-500"
               />
               <div className="flex justify-between text-xs text-white/40 mt-1">
-                <span>₹1L</span>
-                <span>₹5Cr</span>
+                <span>₹1 {t('impactCalculator.units.lakh')}</span>
+                <span>₹5 {t('impactCalculator.units.crore')}</span>
               </div>
             </div>
 
             <p className="text-xs text-white/40 leading-relaxed">
-              Based on an average traditional tender cycle of {results.traditionalCycleDays} days
-              vs. a PilotGov cycle of {results.pilotgovCycleDays} days, and typical
-              administrative overhead reduction from streamlined, startup-friendly
-              procurement.
+              {t('impactCalculator.benchmarksNote', {
+                traditionalDays: results.traditionalCycleDays,
+                pilotgovDays: results.pilotgovCycleDays,
+              })}
             </p>
           </div>
 
@@ -122,43 +124,51 @@ export default function ImpactCalculator() {
           <div className="grid grid-cols-2 gap-4">
             <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5">
               <p className="text-xs uppercase tracking-wide text-emerald-400/80 mb-2">
-                Time Saved / Year
+                {t('impactCalculator.timeSavedTitle')}
               </p>
               <p className="text-2xl font-bold text-white">
-                {results.totalDaysSaved.toLocaleString('en-IN')} days
+                {t('impactCalculator.daysValue', {
+                  days: results.totalDaysSaved.toLocaleString('en-IN'),
+                })}
               </p>
               <p className="text-xs text-white/40 mt-1">
-                ≈ {(results.totalDaysSaved / 30).toFixed(1)} months across all needs
+                {t('impactCalculator.timeSavedMonths', {
+                  months: (results.totalDaysSaved / 30).toFixed(1),
+                })}
               </p>
             </div>
 
             <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5">
               <p className="text-xs uppercase tracking-wide text-emerald-400/80 mb-2">
-                Cost Saved / Year
+                {t('impactCalculator.costSavedTitle')}
               </p>
               <p className="text-2xl font-bold text-white">
-                {formatINR(results.totalCostSaved)}
+                {formatINR(results.totalCostSaved, t)}
               </p>
-              <p className="text-xs text-white/40 mt-1">from reduced process overhead</p>
+              <p className="text-xs text-white/40 mt-1">{t('impactCalculator.costSavedNote')}</p>
             </div>
 
             <div className="col-span-2 rounded-xl border border-white/10 bg-white/[0.02] p-5">
               <p className="text-xs uppercase tracking-wide text-white/50 mb-2">
-                Procurement Cycle Speed
+                {t('impactCalculator.cycleSpeedTitle')}
               </p>
               <p className="text-2xl font-bold text-white">
-                {results.cycleSpeedupMultiple.toFixed(1)}x faster
+                {t('impactCalculator.cycleSpeedValue', {
+                  multiple: results.cycleSpeedupMultiple.toFixed(1),
+                })}
               </p>
               <p className="text-xs text-white/40 mt-1">
-                {results.traditionalCycleDays} days → {results.pilotgovCycleDays} days per need
+                {t('impactCalculator.cycleSpeedNote', {
+                  traditionalDays: results.traditionalCycleDays,
+                  pilotgovDays: results.pilotgovCycleDays,
+                })}
               </p>
             </div>
           </div>
         </div>
 
         <p className="text-center text-[11px] text-white/30 mt-6">
-          Figures are illustrative projections based on typical public procurement
-          benchmarks, not guaranteed outcomes.
+          {t('impactCalculator.disclaimer')}
         </p>
       </div>
     </section>

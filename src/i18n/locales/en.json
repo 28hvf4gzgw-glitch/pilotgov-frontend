@@ -345,6 +345,37 @@
       "postNeed": "Post a Department Need",
       "exploreStartups": "Discover Startups"
     }
+  },
+  "impactCalculator": {
+    "badge": "Impact Calculator",
+    "title": "See what your department could save",
+    "subtitle": "Estimate the time and cost impact of routing procurement needs through PilotGov's Identify → Discover → Pilot → Scale pipeline instead of a traditional tender process.",
+    "needsPerYearLabel": "Procurement needs posted per year",
+    "avgContractValueLabel": "Avg. contract value per need",
+    "benchmarksNote": "Based on an average traditional tender cycle of {{traditionalDays}} days vs. a PilotGov cycle of {{pilotgovDays}} days, and typical administrative overhead reduction from streamlined, startup-friendly procurement.",
+    "timeSavedTitle": "Time Saved / Year",
+    "daysValue": "{{days}} days",
+    "timeSavedMonths": "≈ {{months}} months across all needs",
+    "costSavedTitle": "Cost Saved / Year",
+    "estimatedSavings": "Estimated Savings",
+    "procurementCycleReduction": "Procurement Cycle Reduction",
+    "riskMitigationScore": "Risk Mitigation Score",
+    "costSavedNote": "from reduced process overhead",
+    "cycleSpeedTitle": "Procurement Cycle Speed",
+    "cycleSpeedValue": "{{multiple}}x faster",
+    "cycleSpeedNote": "{{traditionalDays}} days → {{pilotgovDays}} days per need",
+    "disclaimer": "Figures are illustrative projections based on typical public procurement benchmarks, not guaranteed outcomes.",
+    "units": {
+      "lakh": "L",
+      "lakhs": "Lakhs",
+      "crore": "Cr",
+      "crores": "Crores",
+      "days": "Days",
+      "months": "Months",
+      "faster": "faster",
+      "perYear": "Year",
+      "perNeed": "per need"
+    }
   }
 }
 

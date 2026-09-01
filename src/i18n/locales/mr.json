@@ -345,6 +345,37 @@
       "postNeed": "विभागीय गरज पोस्ट करा",
       "exploreStartups": "स्टार्टअप्स शोधा"
     }
+  },
+  "impactCalculator": {
+    "badge": "प्रभाव कॅल्क्युलेटर",
+    "title": "तुमचा विभाग किती बचत करू शकतो ते पहा",
+    "subtitle": "पारंपरिक निविदा प्रक्रियेऐवजी PilotGov च्या ओळखा → शोधा → पायलट → विस्तार पाइपलाइनद्वारे खरेदी गरजा पूर्ण करून होणाऱ्या वेळ आणि खर्चाच्या बचतीचा अंदाज घ्या.",
+    "needsPerYearLabel": "दरवर्षी पोस्ट केलेल्या खरेदी गरजा",
+    "avgContractValueLabel": "प्रति गरज सरासरी करार मूल्य",
+    "benchmarksNote": "सरासरी पारंपरिक निविदा चक्राच्या {{traditionalDays}} दिवसांच्या तुलनेत PilotGov चक्राच्या {{pilotgovDays}} दिवसांवर आणि सुलभ, स्टार्टअप-अनुकूल खरेदीमुळे प्रशासकीय खर्चातील कपातीवर आधारित.",
+    "timeSavedTitle": "वाचलेला वेळ / वर्ष",
+    "daysValue": "{{days}} दिवस",
+    "timeSavedMonths": "≈ सर्व गरजांमध्ये {{months}} महिने",
+    "costSavedTitle": "वाचलेला खर्च / वर्ष",
+    "estimatedSavings": "अंदाजे बचत",
+    "procurementCycleReduction": "खरेदी चक्रातील घट",
+    "riskMitigationScore": "जोखीम निवारण स्कोअर",
+    "costSavedNote": "कमी प्रक्रियेच्या ओव्हरहेडमधून",
+    "cycleSpeedTitle": "खरेदी चक्राचा वेग",
+    "cycleSpeedValue": "{{multiple}}x जलद",
+    "cycleSpeedNote": "{{traditionalDays}} दिवस → {{pilotgovDays}} दिवस प्रति गरज",
+    "disclaimer": "आकडे हे ठराविक सार्वजनिक खरेदीच्या मानकांवर आधारित स्पष्टीकरणात्मक अंदाज आहेत, हमी दिलेले निकाल नाहीत.",
+    "units": {
+      "lakh": "लाख",
+      "lakhs": "लाख",
+      "crore": "कोटी",
+      "crores": "कोटी",
+      "days": "दिवस",
+      "months": "महिने",
+      "faster": "जलद",
+      "perYear": "वर्ष",
+      "perNeed": "प्रति गरज"
+    }
   }
 }
 
