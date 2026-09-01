@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import ImpactCalculator from '@/components/ImpactCalculator';
 import { fadeUp, stagger, staggerItem } from '@/lib/motion';
 import {
   ImpactSummary,
@@ -37,8 +38,25 @@ import {
   fallbackImpactSummary,
   fallbackScaledContracts,
 } from '@/lib/data';
-import { api, ApiError, BASE_URL } from '@/lib/api';
+import { api, BASE_URL } from '@/lib/api';
 import { DOMAIN_CONFIGS } from '@/lib/domains';
+
+function safeT(
+  t: (key: string, options?: Record<string, unknown>) => unknown,
+  key: string,
+  fallback: string,
+  options?: Record<string, unknown>
+): string {
+  try {
+    const val = t(key, { defaultValue: fallback, ...options });
+    if (typeof val === 'string' && val.trim() !== '' && !val.startsWith('[object')) {
+      return val;
+    }
+    return fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 const domainIcons: Record<string, typeof Sprout> = {
   AgriTech: Sprout,
@@ -72,13 +90,16 @@ export default function ImpactDashboard() {
     setLoading(true);
     try {
       const data = await api<ImpactSummary>('/impact/summary');
-      setSummary(data);
-      setUsingFallback(false);
-    } catch (err) {
-      if (err instanceof ApiError || err instanceof TypeError) {
+      if (data && typeof data === 'object') {
+        setSummary(data);
+        setUsingFallback(false);
+      } else {
         setSummary(fallbackImpactSummary);
         setUsingFallback(true);
       }
+    } catch {
+      setSummary(fallbackImpactSummary);
+      setUsingFallback(true);
     } finally {
       setLoading(false);
     }
@@ -522,12 +543,19 @@ export default function ImpactDashboard() {
                     to="/domains/agritech"
                     className="text-emerald2-400 hover:text-emerald2-300 font-medium inline-flex items-center gap-1"
                   >
-                    {t('impact.domains.explore')}
+                    {safeT(t, 'impact.domains.explore', 'Explore Domain Hub')}
                     <ArrowRight className="h-3 w-3" />
                   </Link>
                 </div>
               </motion.div>
             </div>
+          </div>
+        </section>
+
+        {/* ===================== EMBEDDED IMPACT CALCULATOR ===================== */}
+        <section className="relative px-6 py-6 border-t border-white/5">
+          <div className="mx-auto max-w-7xl">
+            <ImpactCalculator />
           </div>
         </section>
 
@@ -546,19 +574,23 @@ export default function ImpactDashboard() {
                 className="inline-flex items-center gap-2 rounded-full bg-emerald2-500/10 border border-emerald2-500/20 px-3 py-1 text-xs font-medium text-emerald2-400 mb-3"
               >
                 <Award className="h-3.5 w-3.5" />
-                {t('impact.contracts.title')}
+                {safeT(t, 'impact.contracts.title', 'Scaled Procurement Contracts')}
               </motion.div>
               <motion.h2
                 variants={staggerItem}
                 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white"
               >
-                {t('impact.contracts.title')}
+                {safeT(t, 'impact.contracts.title', 'Scaled Procurement Contracts')}
               </motion.h2>
               <motion.p
                 variants={staggerItem}
                 className="mt-2 text-sm sm:text-base text-white/50"
               >
-                {t('impact.contracts.subtitle')}
+                {safeT(
+                  t,
+                  'impact.contracts.subtitle',
+                  'Verified pilot graduates that have transitioned into full public procurement contracts.'
+                )}
               </motion.p>
             </motion.div>
 
@@ -613,7 +645,7 @@ export default function ImpactDashboard() {
 
                       <p className="text-xs font-medium text-white/60 mb-2 flex items-center gap-1.5">
                         <span className="flex h-5 w-5 items-center justify-center rounded bg-white/5 text-[10px] font-semibold text-white/70">
-                          {contract.startup[0]}
+                          {contract.startup ? contract.startup[0] : 'S'}
                         </span>
                         {contract.startup}
                       </p>

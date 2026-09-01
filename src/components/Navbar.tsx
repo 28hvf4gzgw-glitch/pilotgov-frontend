@@ -39,6 +39,7 @@ export default function Navbar() {
     { key: 'forStartups', anchor: 'for-startups' },
     { key: 'forGovernment', anchor: 'for-government' },
     { key: 'trust', anchor: 'trust' },
+    { key: 'impact', anchor: 'impact' },
   ];
 
   useEffect(() => {
@@ -171,21 +172,9 @@ export default function Navbar() {
               href={`/#${l.anchor}`}
               className="text-sm text-white/65 hover:text-white transition-colors duration-200"
             >
-              {t(`nav.${l.key}`)}
+              {t(`nav.${l.key}`, l.key)}
             </a>
           ))}
-
-          {/* Impact Route Link */}
-          <Link
-            to="/impact"
-            className={`text-sm transition-colors duration-200 ${
-              location.pathname === '/impact'
-                ? 'text-emerald2-400 font-semibold'
-                : 'text-white/65 hover:text-white'
-            }`}
-          >
-            {t('nav.impact')}
-          </Link>
         </div>
 
         {/* Right Actions */}
@@ -260,19 +249,9 @@ export default function Navbar() {
                   href={`/#${l.anchor}`}
                   className="block text-sm text-white/70 hover:text-white py-1 transition-colors"
                 >
-                  {t(`nav.${l.key}`)}
+                  {t(`nav.${l.key}`, l.key)}
                 </a>
               ))}
-              <Link
-                to="/impact"
-                className={`block text-sm py-1 transition-colors ${
-                  location.pathname === '/impact'
-                    ? 'text-emerald2-400 font-semibold'
-                    : 'text-white/70 hover:text-white'
-                }`}
-              >
-                {t('nav.impact')}
-              </Link>
             </div>
 
             {/* Mobile Actions */}
