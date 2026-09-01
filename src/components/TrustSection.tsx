@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { BarChart3, TrendingUp, Minus, Zap } from 'lucide-react';
+import { BarChart3, TrendingUp, Minus, Zap, ArrowRight } from 'lucide-react';
 import { stagger, staggerItem } from '@/lib/motion';
 import { outcomeData } from '@/lib/data';
 
@@ -120,7 +121,13 @@ export default function TrustSection() {
 
               <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between text-xs text-white/30">
                 <span>{t('trust.reportingPeriod')}</span>
-                <span className="text-emerald2-400">{t('trust.viewFullReport')}</span>
+                <Link
+                  to="/report"
+                  className="inline-flex items-center gap-1.5 text-emerald2-400 hover:text-emerald2-300 font-medium transition-colors group"
+                >
+                  <span>{t('trust.viewFullReport')}</span>
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
+                </Link>
               </div>
             </div>
           </motion.div>

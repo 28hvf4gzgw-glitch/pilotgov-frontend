@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Send, Loader2, WifiOff, Building2 } from 'lucide-react';
+import { Send, Loader2, WifiOff, Building2, ChevronDown, ChevronUp } from 'lucide-react';
 import { stagger, staggerItem } from '@/lib/motion';
 import { api, ApiError } from '@/lib/api';
 import { departments } from '@/lib/departments';
@@ -43,6 +43,7 @@ export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
   const [usingFallback, setUsingFallback] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(3);
 
   const [form, setForm] = useState({
     dept: '',
@@ -117,6 +118,7 @@ export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
         body: JSON.stringify(form),
       });
       setNeeds((prev) => [created, ...prev]);
+      setVisibleCount(3);
       setUsingFallback(false);
       setForm({ dept: '', title: '', description: '', budget: '', domain: domains[0] });
       onNeedCreated?.({
@@ -135,6 +137,7 @@ export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
         status: 'Open',
       };
       setNeeds((prev) => [localNeed, ...prev]);
+      setVisibleCount(3);
       setUsingFallback(true);
       setForm({ dept: '', title: '', description: '', budget: '', domain: domains[0] });
       onNeedCreated?.({
@@ -148,6 +151,8 @@ export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
       setSubmitting(false);
     }
   };
+
+  const visibleNeeds = needs.slice(0, visibleCount);
 
   return (
     <section id="post-need" className="relative py-28 px-6 border-t border-white/5">
@@ -170,7 +175,7 @@ export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
           </motion.p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-12 gap-8">
+        <div className="grid lg:grid-cols-12 gap-8 items-start">
           {/* Form */}
           <motion.form
             onSubmit={handleSubmit}
@@ -178,7 +183,7 @@ export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
-            className="lg:col-span-5 rounded-2xl border border-white/10 bg-ink-850 p-6 space-y-4 shadow-2xl shadow-black/40"
+            className="lg:col-span-5 rounded-2xl border border-white/10 bg-ink-850 p-6 sm:p-8 space-y-4 shadow-2xl shadow-black/40"
           >
             <motion.div variants={staggerItem} className="relative" ref={deptFieldRef}>
               <label className="text-xs text-white/40 mb-1.5 block">{t('postNeed.labelDept')}</label>
@@ -219,10 +224,10 @@ export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
             <motion.div variants={staggerItem}>
               <label className="text-xs text-white/40 mb-1.5 block">{t('postNeed.labelDescription')}</label>
               <textarea
+                rows={3}
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
                 placeholder={t('postNeed.placeholderDescription')}
-                rows={3}
                 className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-emerald2-500/40 transition-colors resize-none"
               />
             </motion.div>
@@ -288,7 +293,7 @@ export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
             </div>
 
             <div className="space-y-3">
-              {needs.map((n) => (
+              {visibleNeeds.map((n) => (
                 <motion.div
                   key={n.id}
                   variants={staggerItem}
@@ -315,6 +320,29 @@ export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
                 </motion.div>
               ))}
             </div>
+
+            {/* See more / Show less buttons */}
+            {needs.length > visibleCount && (
+              <button
+                type="button"
+                onClick={() => setVisibleCount((prev) => prev + 5)}
+                className="mt-3 w-full inline-flex items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] py-2.5 px-4 text-xs font-medium text-white/60 hover:text-white hover:bg-white/[0.06] hover:border-white/20 transition-all"
+              >
+                <ChevronDown className="h-3.5 w-3.5" />
+                <span>{t('postNeed.seeMore', { count: needs.length - visibleCount })}</span>
+              </button>
+            )}
+
+            {visibleCount >= needs.length && needs.length > 3 && (
+              <button
+                type="button"
+                onClick={() => setVisibleCount(3)}
+                className="mt-3 w-full inline-flex items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] py-2.5 px-4 text-xs font-medium text-white/60 hover:text-white hover:bg-white/[0.06] hover:border-white/20 transition-all"
+              >
+                <ChevronUp className="h-3.5 w-3.5" />
+                <span>{t('postNeed.showLess')}</span>
+              </button>
+            )}
           </motion.div>
         </div>
       </div>

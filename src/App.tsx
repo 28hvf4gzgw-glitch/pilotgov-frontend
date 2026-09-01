@@ -13,6 +13,7 @@ import ImpactCalculator from '@/components/ImpactCalculator';
 import Footer from '@/components/Footer';
 import DomainPage from '@/components/DomainPage';
 import ImpactDashboard from '@/components/ImpactDashboard';
+import FullReport from '@/components/FullReport';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import AssistantWidget from '@/components/AssistantWidget';
 
@@ -92,6 +93,7 @@ export default function App() {
       <AnimatedBackground />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/report" element={<FullReport />} />
         <Route path="/impact" element={<ImpactDashboard />} />
         <Route path="/scale" element={<ImpactDashboard />} />
         <Route path="/domains/agritech" element={<DomainPage domain="AgriTech" />} />
