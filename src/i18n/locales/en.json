@@ -7,6 +7,7 @@
     "forGovernment": "For Government",
     "trust": "Trust",
     "impact": "Impact",
+    "reviews": "Reviews",
     "signIn": "Sign in",
     "bookDemo": "Book a Demo"
   },
@@ -413,7 +414,38 @@
     "emailPlaceholder": "name@example.gov.in",
     "passwordPlaceholder": "••••••••",
     "authFailed": "Authentication failed. Please check your credentials."
+  },
+  "reviews": {
+    "eyebrow": "Citizen Transparency",
+    "title": "Public Citizen Reviews",
+    "subtitle": "Transparent feedback from verified citizens on deployed public services, pilots, and scaled contracts.",
+    "leaveReview": "Leave a review",
+    "rating": "Rating",
+    "comment": "Comment",
+    "submitReview": "Submit review",
+    "submitting": "Submitting review...",
+    "submitted": "Review submitted successfully!",
+    "loginAsCitizen": "Log in as a citizen to leave a review",
+    "alreadyReviewed": "You've already reviewed this pilot",
+    "noReviews": "No reviews yet — be the first to review a completed pilot",
+    "seeMore": "See more (+{{count}})",
+    "showLess": "Show less",
+    "fetching": "Fetching citizen reviews...",
+    "live": "Live from PilotGov API",
+    "offline": "Backend offline — showing sample reviews",
+    "verifiedCitizen": "Verified Citizen",
+    "reviewsCount": "{{count}} reviews",
+    "avgRating": "Avg. {{rating}}",
+    "rateThisPilot": "Rate this completed pilot",
+    "commentPlaceholder": "Describe how this deployed public solution impacted your community or department...",
+    "cancel": "Cancel",
+    "stars1": "1 - Poor",
+    "stars2": "2 - Fair",
+    "stars3": "3 - Good",
+    "stars4": "4 - Very Good",
+    "stars5": "5 - Excellent"
   }
 }
+
 
 

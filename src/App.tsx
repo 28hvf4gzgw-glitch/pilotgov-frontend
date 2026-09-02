@@ -9,6 +9,7 @@ import PostNeed from '@/components/PostNeed';
 import StartupDiscovery from '@/components/StartupDiscovery';
 import PilotTracker from '@/components/PilotTracker';
 import TrustSection from '@/components/TrustSection';
+import PublicReviews from '@/components/PublicReviews';
 import ImpactCalculator from '@/components/ImpactCalculator';
 import Footer from '@/components/Footer';
 import DomainPage from '@/components/DomainPage';
@@ -80,11 +81,24 @@ function HomePage() {
           />
           <PilotTracker />
           <TrustSection />
+          <PublicReviews />
           <ImpactCalculator />
         </main>
         <Footer />
       </div>
     </PilotBoardProvider>
+  );
+}
+
+function ReviewsPage() {
+  return (
+    <div className="min-h-screen bg-transparent text-white antialiased selection:bg-emerald2-500/30">
+      <Navbar />
+      <main className="pt-20">
+        <PublicReviews />
+      </main>
+      <Footer />
+    </div>
   );
 }
 
@@ -101,6 +115,7 @@ export default function App() {
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/login" element={<AuthPage defaultMode="login" />} />
             <Route path="/register" element={<AuthPage defaultMode="register" />} />
+            <Route path="/reviews" element={<ReviewsPage />} />
             <Route path="/report" element={<FullReport />} />
             <Route path="/impact" element={<ImpactDashboard />} />
             <Route path="/scale" element={<ImpactDashboard />} />
@@ -120,6 +135,7 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
 
 
 

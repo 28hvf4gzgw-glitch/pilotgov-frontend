@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import {
   FileText,
@@ -27,14 +27,19 @@ import {
   GraduationCap,
   FlaskConical,
   IndianRupee,
+  Star,
+  MessageSquareQuote,
+  X,
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ImpactCalculator from '@/components/ImpactCalculator';
+import ReviewForm from '@/components/ReviewForm';
 import { fadeUp, stagger, staggerItem } from '@/lib/motion';
 import {
   ImpactSummary,
   ScaledContract,
+  ReviewStats,
   fallbackImpactSummary,
   fallbackScaledContracts,
 } from '@/lib/data';
@@ -85,6 +90,19 @@ export default function ImpactDashboard() {
   const [summary, setSummary] = useState<ImpactSummary>(fallbackImpactSummary);
   const [loading, setLoading] = useState(true);
   const [usingFallback, setUsingFallback] = useState(false);
+  const [contractStats, setContractStats] = useState<Record<string, ReviewStats>>({});
+  const [reviewingContract, setReviewingContract] = useState<ScaledContract | null>(null);
+
+  const fetchStats = async (contractId: string) => {
+    try {
+      const stats = await api<ReviewStats>(`/reviews/contract/${contractId}/stats`);
+      if (stats && typeof stats.avgRating === 'number') {
+        setContractStats((prev) => ({ ...prev, [contractId]: stats }));
+      }
+    } catch {
+      // Fallback default or keep existing
+    }
+  };
 
   const fetchSummary = async () => {
     setLoading(true);
@@ -115,6 +133,15 @@ export default function ImpactDashboard() {
     }
     return fallbackScaledContracts;
   }, [summary]);
+
+  // Fetch stats for all scaled contracts
+  useEffect(() => {
+    scaledContractsList.forEach((c) => {
+      if (c.id) {
+        fetchStats(c.id);
+      }
+    });
+  }, [scaledContractsList]);
 
   const maxFunnelValue = useMemo(() => {
     const funnel = summary.pipelineFunnel || fallbackImpactSummary.pipelineFunnel;
@@ -692,18 +719,56 @@ export default function ImpactDashboard() {
                         </div>
                       </div>
 
-                      {/* Download Contract PDF Action Button */}
-                      <a
-                        href={`${BASE_URL}/scale/contracts/${contract.id}/pdf`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        download={`contract-${contract.id}.pdf`}
-                        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald2-500/10 border border-emerald2-500/30 px-4 py-2.5 text-xs font-semibold text-emerald2-400 hover:bg-emerald2-500/20 hover:border-emerald2-500/50 transition-all group/btn shadow-sm"
-                        title={t('impact.contracts.downloadPdf')}
-                      >
-                        <FileDown className="h-4 w-4 transition-transform group-hover/btn:-translate-y-0.5" />
-                        <span>{t('impact.contracts.downloadContract')}</span>
-                      </a>
+                      {/* Rating & Citizen Review Stats */}
+                      <div className="flex items-center justify-between py-2 px-3 mb-4 rounded-xl bg-white/[0.03] border border-white/5 text-xs">
+                        <div className="flex items-center gap-1.5">
+                          <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                          <span className="font-semibold text-white tabular-nums">
+                            {contractStats[contract.id]?.avgRating != null &&
+                            contractStats[contract.id]?.reviewCount > 0
+                              ? contractStats[contract.id].avgRating.toFixed(1)
+                              : '5.0'}
+                          </span>
+                          <span className="text-[11px] text-white/40">
+                            ({contractStats[contract.id]?.reviewCount ?? 1}{' '}
+                            {t('reviews.reviewsCount', {
+                              count: contractStats[contract.id]?.reviewCount ?? 1,
+                            })})
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setReviewingContract(contract)}
+                          className="text-[11px] font-semibold text-emerald2-400 hover:text-emerald2-300 hover:underline flex items-center gap-1 transition-colors"
+                        >
+                          <MessageSquareQuote className="h-3 w-3" />
+                          <span>{t('reviews.leaveReview')}</span>
+                        </button>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <a
+                          href={`${BASE_URL}/scale/contracts/${contract.id}/pdf`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          download={`contract-${contract.id}.pdf`}
+                          className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald2-500/10 border border-emerald2-500/30 px-3 py-2.5 text-xs font-semibold text-emerald2-400 hover:bg-emerald2-500/20 hover:border-emerald2-500/50 transition-all group/btn shadow-sm"
+                          title={t('impact.contracts.downloadPdf')}
+                        >
+                          <FileDown className="h-3.5 w-3.5 transition-transform group-hover/btn:-translate-y-0.5" />
+                          <span className="truncate">{t('impact.contracts.downloadContract')}</span>
+                        </a>
+
+                        <button
+                          type="button"
+                          onClick={() => setReviewingContract(contract)}
+                          className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-white/[0.04] border border-white/10 px-3 py-2.5 text-xs font-semibold text-white/80 hover:bg-white/[0.08] hover:text-white hover:border-white/20 transition-all"
+                        >
+                          <MessageSquareQuote className="h-3.5 w-3.5 text-emerald2-400" />
+                          <span className="truncate">{t('reviews.leaveReview')}</span>
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
                 );
@@ -711,6 +776,36 @@ export default function ImpactDashboard() {
             </motion.div>
           </div>
         </section>
+
+        {/* Review Submission Modal Dialog */}
+        <AnimatePresence>
+          {reviewingContract && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+              onClick={() => setReviewingContract(null)}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 12 }}
+                transition={{ duration: 0.2 }}
+                className="w-full max-w-lg"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ReviewForm
+                  scaledContractId={reviewingContract.id}
+                  contractTitle={reviewingContract.title}
+                  dept={reviewingContract.dept}
+                  startup={reviewingContract.startup}
+                  onSubmitted={() => {
+                    fetchStats(reviewingContract.id);
+                  }}
+                  onCancel={() => setReviewingContract(null)}
+                />
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
 
         {/* ===================== BOTTOM CTA BANNER ===================== */}
         <section className="relative px-6 py-12 border-t border-white/5">

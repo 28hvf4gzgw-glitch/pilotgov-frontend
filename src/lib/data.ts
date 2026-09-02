@@ -325,3 +325,91 @@ export const departments = [
 // and howItWorks.step*, looked up by index in the components.
 export const statValues = ['3.4%', '9 months', '67%'];
 export const stepNumbers = ['01', '02', '03', '04'];
+
+export interface Review {
+  id: string;
+  scaledContractId: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  citizenName?: string;
+  citizen?: {
+    id: string;
+    name: string;
+    email?: string;
+  };
+  contractTitle?: string;
+  dept?: string;
+  startup?: string;
+  contract?: {
+    id: string;
+    title: string;
+    dept: string;
+    startup: string;
+    domain?: string;
+  };
+}
+
+export interface ReviewStats {
+  avgRating: number;
+  reviewCount: number;
+}
+
+export const fallbackReviews: Review[] = [
+  {
+    id: 'rev-1',
+    scaledContractId: 'cleangrid-solar-microgrids',
+    rating: 5,
+    comment: 'The solar microgrid in our municipal zone has been running seamlessly with zero blackouts during heavy monsoon season. Huge improvement over diesel generators.',
+    createdAt: '2026-08-28T10:30:00.000Z',
+    citizenName: 'Aarav Patel',
+    contractTitle: 'Solar microgrids for 15 municipal zones',
+    dept: 'Dept. of Urban Infrastructure',
+    startup: 'CleanGrid Energy',
+  },
+  {
+    id: 'rev-2',
+    scaledContractId: 'medtrack-offline-ehr',
+    rating: 5,
+    comment: 'Health records at our Primary Health Centre now sync instantly when doctors travel between rural clinics. Zero waiting time for prescription history.',
+    createdAt: '2026-08-25T14:15:00.000Z',
+    citizenName: 'Dr. Priya Deshmukh',
+    contractTitle: 'Offline EHR rollout in 120 primary health centres',
+    dept: 'Dept. of Health & Family Welfare',
+    startup: 'MedTrack Solutions',
+  },
+  {
+    id: 'rev-3',
+    scaledContractId: 'agrosense-crop-yield',
+    rating: 4,
+    comment: 'The district crop yield forecast was accurate within 90% in our taluk. Allowed our cooperative to prepare storage facilities ahead of harvest.',
+    createdAt: '2026-08-20T09:00:00.000Z',
+    citizenName: 'Ramesh Kulkarni',
+    contractTitle: 'Crop yield forecasting across 8 districts',
+    dept: 'Dept. of Rural Development',
+    startup: 'AgroSense AI',
+  },
+  {
+    id: 'rev-4',
+    scaledContractId: 'edubridge-digital-classrooms',
+    rating: 5,
+    comment: 'Mother-tongue modules in village schools made a huge difference. Children are genuinely engaged with the interactive local language content.',
+    createdAt: '2026-08-15T16:45:00.000Z',
+    citizenName: 'Sunita Sharma',
+    contractTitle: 'Vernacular digital classrooms for 350 rural schools',
+    dept: 'Dept. of School Education',
+    startup: 'EduBridge',
+  },
+  {
+    id: 'rev-5',
+    scaledContractId: 'urbanflow-traffic-routing',
+    rating: 4,
+    comment: 'Adaptive traffic routing noticeably reduced morning bottleneck along the central arterial corridor by 15-20 minutes.',
+    createdAt: '2026-08-10T11:20:00.000Z',
+    citizenName: 'Vikram Joshi',
+    contractTitle: 'AI traffic routing pilot — 3 corridor cities',
+    dept: 'Dept. of Urban Infrastructure',
+    startup: 'UrbanFlow Logistics',
+  },
+];
+

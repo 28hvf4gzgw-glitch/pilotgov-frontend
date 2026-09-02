@@ -44,6 +44,7 @@ export default function Navbar() {
     { key: 'forGovernment', anchor: 'for-government' },
     { key: 'trust', anchor: 'trust' },
     { key: 'impact', anchor: 'impact' },
+    { key: 'reviews', anchor: 'public-reviews' },
   ];
 
   useEffect(() => {
