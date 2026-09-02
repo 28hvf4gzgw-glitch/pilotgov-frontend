@@ -13,10 +13,13 @@ import {
   Sparkles,
   Menu,
   X,
+  LogOut,
+  User as UserIcon,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import LanguageSwitcher from './LanguageSwitcher';
 import { DOMAIN_CONFIGS } from '@/lib/domains';
+import { useAuth } from '@/context/AuthContext';
 
 const domainIcons: Record<string, typeof Sprout> = {
   agritech: Sprout,
@@ -29,6 +32,7 @@ const domainIcons: Record<string, typeof Sprout> = {
 export default function Navbar() {
   const { t } = useTranslation();
   const location = useLocation();
+  const { user, logout } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [domainsOpen, setDomainsOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -70,6 +74,32 @@ export default function Navbar() {
   }, [location.pathname]);
 
   const isDomainActive = location.pathname.startsWith('/domains/');
+
+  const getRoleBadgeStyle = (role?: string) => {
+    switch (role) {
+      case 'OFFICER':
+        return 'bg-emerald2-500/10 text-emerald2-400 border-emerald2-500/30';
+      case 'STARTUP':
+        return 'bg-sky-500/10 text-sky-400 border-sky-500/30';
+      case 'CITIZEN':
+        return 'bg-purple-500/10 text-purple-400 border-purple-500/30';
+      default:
+        return 'bg-white/10 text-white/70 border-white/20';
+    }
+  };
+
+  const getRoleLabel = (role?: string) => {
+    switch (role) {
+      case 'OFFICER':
+        return t('auth.officer');
+      case 'STARTUP':
+        return t('auth.startup');
+      case 'CITIZEN':
+        return t('auth.citizen');
+      default:
+        return role || '';
+    }
+  };
 
   return (
     <header
@@ -181,20 +211,39 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
 
-          <a
-            href="/#for-startups"
-            className="hidden sm:inline text-sm text-white/70 hover:text-white transition-colors"
-          >
-            {t('nav.signIn')}
-          </a>
-
-          <a
-            href="/#how-it-works"
-            className="hidden sm:inline-flex group items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-ink-950 hover:bg-white/90 transition-all duration-200 hover:shadow-lg hover:shadow-white/10"
-          >
-            {t('nav.bookDemo')}
-            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-          </a>
+          {user ? (
+            <div className="hidden sm:flex items-center gap-3 pl-2 border-l border-white/10">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-medium text-white max-w-[120px] truncate">
+                  {user.name}
+                </span>
+                <span
+                  className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${getRoleBadgeStyle(
+                    user.role
+                  )}`}
+                >
+                  {getRoleLabel(user.role)}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={logout}
+                title={t('auth.logout')}
+                className="inline-flex items-center gap-1 text-xs text-white/60 hover:text-rose-400 p-1.5 rounded-lg hover:bg-white/5 transition-colors"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                <span>{t('auth.logout')}</span>
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/auth"
+              className="hidden sm:inline-flex group items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-ink-950 hover:bg-white/90 transition-all duration-200 hover:shadow-lg hover:shadow-white/10"
+            >
+              <span>{t('auth.login')}</span>
+              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          )}
 
           {/* Mobile Menu Toggle Button */}
           <button
@@ -218,6 +267,41 @@ export default function Navbar() {
             transition={{ duration: 0.2 }}
             className="md:hidden border-t border-white/10 bg-ink-950/95 backdrop-blur-2xl px-6 py-5 space-y-4"
           >
+            {/* User status on mobile */}
+            {user && (
+              <div className="pb-3 border-b border-white/10 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-white flex items-center gap-2">
+                    <UserIcon className="h-3.5 w-3.5 text-emerald2-400" />
+                    <span>{user.name}</span>
+                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span
+                      className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${getRoleBadgeStyle(
+                        user.role
+                      )}`}
+                    >
+                      {getRoleLabel(user.role)}
+                    </span>
+                    {user.orgName && (
+                      <span className="text-xs text-white/40 truncate">{user.orgName}</span>
+                    )}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    logout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs text-rose-300 hover:text-rose-200 bg-rose-500/10 border border-rose-500/20 rounded-lg"
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                  <span>{t('auth.logout')}</span>
+                </button>
+              </div>
+            )}
+
             {/* Domain links */}
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-wider text-white/40 mb-2.5 flex items-center gap-1.5">
@@ -255,19 +339,23 @@ export default function Navbar() {
             </div>
 
             {/* Mobile Actions */}
-            <div className="border-t border-white/5 pt-3 flex flex-col gap-2.5">
-              <a
-                href="/#how-it-works"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-ink-950"
-              >
-                {t('nav.bookDemo')}
-                <ArrowRight className="h-3.5 w-3.5" />
-              </a>
-            </div>
+            {!user && (
+              <div className="border-t border-white/5 pt-3 flex flex-col gap-2.5">
+                <Link
+                  to="/auth"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-ink-950"
+                >
+                  {t('auth.login')}
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
     </header>
   );
 }
+
 

@@ -18,12 +18,15 @@ import {
   Sparkles,
   CheckCircle2,
   Layers,
+  Lock,
 } from 'lucide-react';
 import { stagger, staggerItem, fadeIn } from '@/lib/motion';
 import { startups as fallbackStartups, Startup, PilotColumn } from '@/lib/data';
 import { departments } from '@/lib/departments';
 import { api, ApiError } from '@/lib/api';
 import { usePilotBoard } from '@/context/PilotBoardContext';
+import { useAuth } from '@/context/AuthContext';
+import { Link } from 'react-router-dom';
 
 const badgeStyles: Record<string, string> = {
   'DPIIT Verified': 'bg-emerald2-500/10 text-emerald2-400 border-emerald2-500/25',
@@ -51,6 +54,8 @@ export default function StartupDiscovery({
   onClearNeed,
 }: StartupDiscoveryProps = {}) {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const isStartup = user?.role === 'STARTUP';
   const pilotBoard = usePilotBoard();
   const [searchParams, setSearchParams] = useSearchParams();
   const needId = propNeedId ?? searchParams.get('needId') ?? undefined;
@@ -123,6 +128,7 @@ export default function StartupDiscovery({
   }, []);
 
   const handleRequestClick = (s: Startup) => {
+    if (!isStartup) return;
     if (needId) {
       // In active need context: directly submit with need data
       submitPilotRequest(s, needDept, needTitle || s.pitch, needBudget || '₹25L', needId);
@@ -595,7 +601,7 @@ export default function StartupDiscovery({
                                     </div>
                                   </div>
 
-                                  {/* CTA */}
+                                   {/* CTA */}
                                   {isApplied ? (
                                     <button
                                       disabled
@@ -612,6 +618,28 @@ export default function StartupDiscovery({
                                       <Loader2 className="h-3.5 w-3.5 animate-spin text-white/50" />
                                       <span className="opacity-70">{t('discovery.requesting', 'Requesting...')}</span>
                                     </button>
+                                  ) : !isStartup ? (
+                                    <div className="mt-3 space-y-2">
+                                      <button
+                                        disabled
+                                        className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white/[0.03] border border-white/10 px-4 py-2.5 text-xs font-medium text-white/40 cursor-not-allowed transition-all"
+                                      >
+                                        <Lock className="h-3.5 w-3.5 text-amber-400/80" />
+                                        <span>{t('auth.onlyStartupsRequestPilot')}</span>
+                                      </button>
+                                      <div className="flex items-center justify-between px-1 text-[11px] text-white/40">
+                                        <span>
+                                          {user ? `${user.name} (${user.role})` : t('auth.loginRequired')}
+                                        </span>
+                                        <Link
+                                          to="/auth"
+                                          onClick={(e) => e.stopPropagation()}
+                                          className="text-emerald2-400 hover:underline font-medium"
+                                        >
+                                          {user ? t('auth.switchAccount') : t('auth.loginAsStartup')}
+                                        </Link>
+                                      </div>
+                                    </div>
                                   ) : (
                                     <button
                                       onClick={(e) => {

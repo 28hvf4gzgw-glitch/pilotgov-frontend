@@ -376,6 +376,44 @@
       "perYear": "Year",
       "perNeed": "per need"
     }
+  },
+  "auth": {
+    "login": "Log in",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "role": "I am a...",
+    "deptName": "Department name",
+    "companyName": "Company name",
+    "officer": "Officer",
+    "startup": "Startup",
+    "citizen": "Citizen",
+    "officerDesc": "Government official posting problem statements & evaluating pilots",
+    "startupDesc": "Innovator applying for public sector pilots & challenges",
+    "citizenDesc": "Public citizen monitoring transparency & procurement impact",
+    "onlyOfficersPostNeed": "Only government officers can post a need — log in as an officer",
+    "onlyStartupsRequestPilot": "Only startups can request a pilot",
+    "logout": "Log out",
+    "switchAccount": "Switch account",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "submitting": "Please wait...",
+    "loginTitle": "Welcome back to PilotGov",
+    "loginSubtitle": "Sign in to access your role-based dashboard and pilots",
+    "registerTitle": "Join the PilotGov Network",
+    "registerSubtitle": "Register to discover, pilot, and scale public-sector innovation",
+    "loginAsOfficer": "Log in as an Officer",
+    "loginAsStartup": "Log in as a Startup",
+    "loginRequired": "Sign in to continue",
+    "loggedInAs": "Logged in as",
+    "deptPlaceholder": "e.g. Dept. of Rural Development",
+    "companyPlaceholder": "e.g. TerraSensors AI",
+    "namePlaceholder": "e.g. Dr. Rajesh Sharma",
+    "emailPlaceholder": "name@example.gov.in",
+    "passwordPlaceholder": "••••••••",
+    "authFailed": "Authentication failed. Please check your credentials."
   }
 }
+
 

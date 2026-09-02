@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Send, Loader2, WifiOff, Building2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Send, Loader2, WifiOff, Building2, ChevronDown, ChevronUp, Lock, ArrowRight } from 'lucide-react';
 import { stagger, staggerItem } from '@/lib/motion';
 import { api, ApiError } from '@/lib/api';
 import { departments } from '@/lib/departments';
+import { useAuth } from '@/context/AuthContext';
 
 interface Need {
   id: string;
@@ -39,6 +41,7 @@ interface PostNeedProps {
 
 export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [needs, setNeeds] = useState<Need[]>(FALLBACK_NEEDS);
   const [usingFallback, setUsingFallback] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -46,12 +49,19 @@ export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
   const [visibleCount, setVisibleCount] = useState(3);
 
   const [form, setForm] = useState({
-    dept: '',
+    dept: user?.role === 'OFFICER' && user.orgName ? user.orgName : '',
     title: '',
     description: '',
     budget: '',
     domain: domains[0],
   });
+
+  // Keep form.dept updated if officer orgName changes
+  useEffect(() => {
+    if (user?.role === 'OFFICER' && user.orgName && !form.dept) {
+      setForm((prev) => ({ ...prev, dept: user.orgName || '' }));
+    }
+  }, [user]);
 
   // Department autocomplete
   const [deptSuggestions, setDeptSuggestions] = useState<string[]>([]);
@@ -120,7 +130,13 @@ export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
       setNeeds((prev) => [created, ...prev]);
       setVisibleCount(3);
       setUsingFallback(false);
-      setForm({ dept: '', title: '', description: '', budget: '', domain: domains[0] });
+      setForm({
+        dept: user?.role === 'OFFICER' && user.orgName ? user.orgName : '',
+        title: '',
+        description: '',
+        budget: '',
+        domain: domains[0],
+      });
       onNeedCreated?.({
         id: created.id,
         title: created.title,
@@ -139,7 +155,13 @@ export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
       setNeeds((prev) => [localNeed, ...prev]);
       setVisibleCount(3);
       setUsingFallback(true);
-      setForm({ dept: '', title: '', description: '', budget: '', domain: domains[0] });
+      setForm({
+        dept: user?.role === 'OFFICER' && user.orgName ? user.orgName : '',
+        title: '',
+        description: '',
+        budget: '',
+        domain: domains[0],
+      });
       onNeedCreated?.({
         id: localNeed.id,
         title: localNeed.title,
@@ -153,6 +175,7 @@ export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
   };
 
   const visibleNeeds = needs.slice(0, visibleCount);
+  const isOfficer = user?.role === 'OFFICER';
 
   return (
     <section id="post-need" className="relative py-28 px-6 border-t border-white/5">
@@ -176,98 +199,136 @@ export default function PostNeed({ onNeedCreated }: PostNeedProps = {}) {
         </motion.div>
 
         <div className="grid lg:grid-cols-12 gap-8 items-start">
-          {/* Form */}
-          <motion.form
-            onSubmit={handleSubmit}
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-80px' }}
-            className="lg:col-span-5 rounded-2xl border border-white/10 bg-ink-850 p-6 sm:p-8 space-y-4 shadow-2xl shadow-black/40"
-          >
-            <motion.div variants={staggerItem} className="relative" ref={deptFieldRef}>
-              <label className="text-xs text-white/40 mb-1.5 block">{t('postNeed.labelDept')}</label>
-              <input
-                value={form.dept}
-                onChange={(e) => handleDeptChange(e.target.value)}
-                onFocus={() => form.dept.trim().length > 0 && setShowDeptSuggestions(deptSuggestions.length > 0)}
-                placeholder={t('postNeed.placeholderDept')}
-                autoComplete="off"
-                className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-emerald2-500/40 transition-colors"
-              />
-              {showDeptSuggestions && (
-                <div className="absolute z-10 mt-1.5 w-full rounded-lg border border-white/10 bg-ink-900 shadow-2xl shadow-black/50 overflow-hidden">
-                  {deptSuggestions.map((d) => (
-                    <button
-                      key={d}
-                      type="button"
-                      onClick={() => selectDept(d)}
-                      className="w-full text-left px-3 py-2.5 text-sm text-white/80 hover:bg-white/[0.06] hover:text-white transition-colors border-b border-white/5 last:border-b-0"
-                    >
-                      {d}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-
-            <motion.div variants={staggerItem}>
-              <label className="text-xs text-white/40 mb-1.5 block">{t('postNeed.labelTitle')}</label>
-              <input
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                placeholder={t('postNeed.placeholderTitle')}
-                className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-emerald2-500/40 transition-colors"
-              />
-            </motion.div>
-
-            <motion.div variants={staggerItem}>
-              <label className="text-xs text-white/40 mb-1.5 block">{t('postNeed.labelDescription')}</label>
-              <textarea
-                rows={3}
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                placeholder={t('postNeed.placeholderDescription')}
-                className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-emerald2-500/40 transition-colors resize-none"
-              />
-            </motion.div>
-
-            <motion.div variants={staggerItem} className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-white/40 mb-1.5 block">{t('postNeed.labelBudget')}</label>
+          {/* Form or Officer Gate */}
+          {isOfficer ? (
+            <motion.form
+              onSubmit={handleSubmit}
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-80px' }}
+              className="lg:col-span-5 rounded-2xl border border-white/10 bg-ink-850 p-6 sm:p-8 space-y-4 shadow-2xl shadow-black/40"
+            >
+              <motion.div variants={staggerItem} className="relative" ref={deptFieldRef}>
+                <label className="text-xs text-white/40 mb-1.5 block">{t('postNeed.labelDept')}</label>
                 <input
-                  value={form.budget}
-                  onChange={(e) => setForm({ ...form, budget: e.target.value })}
-                  placeholder={t('postNeed.placeholderBudget')}
+                  value={form.dept}
+                  onChange={(e) => handleDeptChange(e.target.value)}
+                  onFocus={() => form.dept.trim().length > 0 && setShowDeptSuggestions(deptSuggestions.length > 0)}
+                  placeholder={t('postNeed.placeholderDept')}
+                  autoComplete="off"
                   className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-emerald2-500/40 transition-colors"
                 />
+                {showDeptSuggestions && (
+                  <div className="absolute z-10 mt-1.5 w-full rounded-lg border border-white/10 bg-ink-900 shadow-2xl shadow-black/50 overflow-hidden">
+                    {deptSuggestions.map((d) => (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => selectDept(d)}
+                        className="w-full text-left px-3 py-2.5 text-sm text-white/80 hover:bg-white/[0.06] hover:text-white transition-colors border-b border-white/5 last:border-b-0"
+                      >
+                        {d}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+
+              <motion.div variants={staggerItem}>
+                <label className="text-xs text-white/40 mb-1.5 block">{t('postNeed.labelTitle')}</label>
+                <input
+                  value={form.title}
+                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  placeholder={t('postNeed.placeholderTitle')}
+                  className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-emerald2-500/40 transition-colors"
+                />
+              </motion.div>
+
+              <motion.div variants={staggerItem}>
+                <label className="text-xs text-white/40 mb-1.5 block">{t('postNeed.labelDescription')}</label>
+                <textarea
+                  rows={3}
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  placeholder={t('postNeed.placeholderDescription')}
+                  className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-emerald2-500/40 transition-colors resize-none"
+                />
+              </motion.div>
+
+              <motion.div variants={staggerItem} className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-white/40 mb-1.5 block">{t('postNeed.labelBudget')}</label>
+                  <input
+                    value={form.budget}
+                    onChange={(e) => setForm({ ...form, budget: e.target.value })}
+                    placeholder={t('postNeed.placeholderBudget')}
+                    className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-emerald2-500/40 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-white/40 mb-1.5 block">{t('postNeed.labelDomain')}</label>
+                  <select
+                    value={form.domain}
+                    onChange={(e) => setForm({ ...form, domain: e.target.value })}
+                    className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2.5 text-sm text-white outline-none focus:border-emerald2-500/40 transition-colors"
+                  >
+                    {domains.map((d) => (
+                      <option key={d} value={d} className="bg-ink-950">
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </motion.div>
+
+              <motion.button
+                variants={staggerItem}
+                type="submit"
+                disabled={submitting}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-ink-950 hover:bg-white/90 transition-all disabled:opacity-50"
+              >
+                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                {t('postNeed.submit')}
+              </motion.button>
+            </motion.form>
+          ) : (
+            <motion.div
+              variants={staggerItem}
+              className="lg:col-span-5 rounded-2xl border border-white/10 bg-ink-850 p-6 sm:p-8 space-y-5 shadow-2xl shadow-black/40 text-left relative overflow-hidden"
+            >
+              <div className="flex items-start gap-3.5">
+                <div className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
+                  <Lock className="h-5 w-5" />
+                </div>
+                <div>
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-amber-400/90">
+                    {t('auth.officer')} • {t('postNeed.eyebrow')}
+                  </span>
+                  <h3 className="text-base font-semibold text-white mt-1 leading-snug">
+                    {t('auth.onlyOfficersPostNeed')}
+                  </h3>
+                </div>
               </div>
-              <div>
-                <label className="text-xs text-white/40 mb-1.5 block">{t('postNeed.labelDomain')}</label>
-                <select
-                  value={form.domain}
-                  onChange={(e) => setForm({ ...form, domain: e.target.value })}
-                  className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2.5 text-sm text-white outline-none focus:border-emerald2-500/40 transition-colors"
+
+              <p className="text-xs text-white/50 leading-relaxed">
+                {user
+                  ? `${t('auth.loggedInAs')} ${user.name} (${user.role}). ${t('auth.onlyOfficersPostNeed')}`
+                  : t('postNeed.subtitle')}
+              </p>
+
+              <div className="pt-2">
+                <Link
+                  to="/auth"
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-ink-950 hover:bg-white/90 transition-all hover:shadow-lg hover:shadow-white/10"
                 >
-                  {domains.map((d) => (
-                    <option key={d} value={d} className="bg-ink-950">
-                      {d}
-                    </option>
-                  ))}
-                </select>
+                  <span>{user ? t('auth.switchAccount') : t('auth.loginAsOfficer')}</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </motion.div>
+          )}
 
-            <motion.button
-              variants={staggerItem}
-              type="submit"
-              disabled={submitting}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-ink-950 hover:bg-white/90 transition-all disabled:opacity-50"
-            >
-              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              {t('postNeed.submit')}
-            </motion.button>
-          </motion.form>
 
           {/* Posted needs list */}
           <motion.div

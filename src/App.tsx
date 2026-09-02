@@ -17,8 +17,10 @@ import FullReport from '@/components/FullReport';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import AssistantWidget from '@/components/AssistantWidget';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import AuthPage from '@/components/AuthPage';
 
 import { PilotBoardProvider } from '@/context/PilotBoardContext';
+import { AuthProvider } from '@/context/AuthContext';
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -89,29 +91,35 @@ function HomePage() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <ScrollToTop />
-        {/* Site-wide persistent background */}
-        <AnimatedBackground />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/report" element={<FullReport />} />
-          <Route path="/impact" element={<ImpactDashboard />} />
-          <Route path="/scale" element={<ImpactDashboard />} />
-          <Route path="/calculator" element={<ImpactDashboard />} />
-          <Route path="/domains/agritech" element={<DomainPage domain="AgriTech" />} />
-          <Route path="/domains/cleantech" element={<DomainPage domain="CleanTech" />} />
-          <Route path="/domains/healthtech" element={<DomainPage domain="HealthTech" />} />
-          <Route path="/domains/smart-mobility" element={<DomainPage domain="Smart Mobility" />} />
-          <Route path="/domains/edtech" element={<DomainPage domain="EdTech" />} />
-          <Route path="/domains/:slug" element={<DomainPage />} />
-          <Route path="*" element={<HomePage />} />
-        </Routes>
-        {/* Site-wide floating AI assistant widget */}
-        <AssistantWidget />
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <ScrollToTop />
+          {/* Site-wide persistent background */}
+          <AnimatedBackground />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/login" element={<AuthPage defaultMode="login" />} />
+            <Route path="/register" element={<AuthPage defaultMode="register" />} />
+            <Route path="/report" element={<FullReport />} />
+            <Route path="/impact" element={<ImpactDashboard />} />
+            <Route path="/scale" element={<ImpactDashboard />} />
+            <Route path="/calculator" element={<ImpactDashboard />} />
+            <Route path="/domains/agritech" element={<DomainPage domain="AgriTech" />} />
+            <Route path="/domains/cleantech" element={<DomainPage domain="CleanTech" />} />
+            <Route path="/domains/healthtech" element={<DomainPage domain="HealthTech" />} />
+            <Route path="/domains/smart-mobility" element={<DomainPage domain="Smart Mobility" />} />
+            <Route path="/domains/edtech" element={<DomainPage domain="EdTech" />} />
+            <Route path="/domains/:slug" element={<DomainPage />} />
+            <Route path="*" element={<HomePage />} />
+          </Routes>
+          {/* Site-wide floating AI assistant widget */}
+          <AssistantWidget />
+        </BrowserRouter>
+      </AuthProvider>
     </ErrorBoundary>
   );
 }
+
 
 
